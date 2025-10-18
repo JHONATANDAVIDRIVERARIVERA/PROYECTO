@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Registro - Clasificador</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; background: #f4f4f9; padding: 40px; }
+        .container { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 0 10px rgba(0,0,0,0.1); display: inline-block; }
+        input { padding: 8px; margin: 8px 0; width: 100%; box-sizing: border-box; }
+        button { padding: 10px 20px; border: none; background: #4CAF50; color: white; border-radius: 8px; cursor: pointer; }
+        .msg { margin: 10px 0; }
+        .error { color: #a94442; }
+        .success { color: #3c763d; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Crear cuenta</h1>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="msg">
+              {% for category, message in messages %}
+                <div class="{{ category }}">{{ message }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        <form action="{{ url_for('register') }}" method="post">
+            <input type="text" name="username" placeholder="Usuario" required>
+            <input type="password" name="password" placeholder="Contraseña" required>
+            <input type="password" name="password2" placeholder="Confirmar contraseña" required>
+            <button type="submit">Registrar</button>
+        </form>
+        <p><a href="{{ url_for('login') }}">Volver al login</a></p>
+    </div>
+</body>
+</html>
