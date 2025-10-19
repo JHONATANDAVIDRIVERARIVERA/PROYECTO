@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}Usuarios - Admin{% endblock %}
+
+{% block content %}
+  <div class="card" style="max-width:800px;">
+    <h1>Administración de usuarios</h1>
+    <p><a href="{{ url_for('index') }}">Volver al inicio</a> | <a href="{{ url_for('logout') }}">Cerrar sesión</a></p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+      <div>
+        {% for category, message in messages %}
+        <div class="{{ category }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+      {% endif %}
+    {% endwith %}
+
+    <h3>Crear nuevo usuario</h3>
+    <form method="post">
+      <input type="text" name="username" placeholder="Usuario" required>
+      <input type="password" name="password" placeholder="Contraseña" required>
+      <button type="submit">Crear usuario</button>
+    </form>
+
+    <h3>Usuarios existentes</h3>
+    <table>
+      <thead><tr><th>ID</th><th>Usuario</th><th>Acciones</th></tr></thead>
+      <tbody>
+        {% for u in users %}
+          <tr>
+            <td>{{ u['id'] }}</td>
+            <td>{{ u['username'] }}</td>
+            <td>
+              {% if u.username != 'admin' and u.username != user %}
+                <form method="post" action="{{ url_for('delete_user', user_id=u['id']) }}" style="display:inline">
+                  <button type="submit" onclick="return confirm('Eliminar usuario {{ u.username }}?')">Eliminar</button>
+                </form>
+              {% else %}
+                &mdash;
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}
