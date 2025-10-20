@@ -3,19 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <title>Registro - Clasificador</title>
+
+    <!-- 🔹 Fuente moderna y legible -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat+Alternates:wght@500;700&display=swap" rel="stylesheet">
+
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; background: #f4f4f9; padding: 40px; }
-        .container { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 0 10px rgba(0,0,0,0.1); display: inline-block; }
-        input { padding: 8px; margin: 8px 0; width: 100%; box-sizing: border-box; }
-        button { padding: 10px 20px; border: none; background: #4CAF50; color: white; border-radius: 8px; cursor: pointer; }
-        .msg { margin: 10px 0; }
-        .error { color: #a94442; }
-        .success { color: #3c763d; }
+        body { 
+            font-family: 'Montserrat Alternates', sans-serif; 
+            text-align: center; 
+            background: #2d6a4f; /* Verde reciclaje */
+            padding: 40px; 
+            margin: 0;
+        }
+
+        .container { 
+            background: #ffffff; 
+            padding: 30px 40px; 
+            border-radius: 16px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2); 
+            display: inline-block; 
+            max-width: 400px;
+            width: 100%;
+        }
+
+        h1 { 
+            color: #2d6a4f; 
+            margin-bottom: 20px; 
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        input { 
+            padding: 10px; 
+            margin: 10px 0; 
+            width: 100%; 
+            border: 1px solid #ccc; 
+            border-radius: 8px; 
+            font-size: 14px;
+            box-sizing: border-box; 
+            transition: border 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border: 1px solid #2d6a4f;
+            box-shadow: 0 0 5px #95d5b2;
+        }
+
+        button { 
+            padding: 12px 20px; 
+            border: none; 
+            background: #40916c; 
+            color: white; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-size: 15px;
+            font-weight: 600;
+            transition: background 0.3s ease, transform 0.2s ease;
+            width: 100%;
+        }
+
+        button:hover { 
+            background: #52b788;
+            transform: scale(1.03);
+        }
+
+        p { 
+            margin-top: 15px; 
+        }
+
+        a { 
+            color: #2d6a4f; 
+            text-decoration: none; 
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        a:hover { 
+            color: #52b788; 
+        }
+
+        .msg { 
+            margin: 10px 0; 
+            font-size: 14px;
+        }
+
+        .error { 
+            color: #a94442; 
+            background: #f8d7da; 
+            padding: 8px; 
+            border-radius: 6px;
+        }
+
+        .success { 
+            color: #2d6a4f; 
+            background: #d1e7dd; 
+            padding: 8px; 
+            border-radius: 6px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Crear cuenta</h1>
+
         {% with messages = get_flashed_messages(with_categories=true) %}
           {% if messages %}
             <div class="msg">
@@ -32,7 +123,8 @@
             <input type="password" name="password2" placeholder="Confirmar contraseña" required>
             <button type="submit">Registrar</button>
         </form>
-        <p><a href="{{ url_for('login') }}">Volver al login</a></p>
+
+        <p><a href="{{ url_for('login') }}">VOLVER A INICIAR SESION</a></p>
     </div>
 </body>
 </html>

@@ -298,6 +298,19 @@ def delete_user(user_id):
     return redirect(url_for('users'))
 
 # =========================
+# RUTAS DE LAS PÁGINAS DEL MENÚ
+# =========================
+@app.route('/pagina1')
+@login_required
+def pagina1():
+    return render_template('pagina1.html', user=session.get('user'))
+
+@app.route('/pagina2')
+@login_required
+def pagina2():
+    return render_template('pagina2.html', user=session.get('user'))
+
+# =========================
 # EJECUTAR SERVIDOR
 # =========================
 if __name__ == '__main__':
