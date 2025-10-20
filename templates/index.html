@@ -3,22 +3,122 @@
 {% block title %}Inicio - Clasificador{% endblock %}
 
 {% block content %}
-    <div class="card">
-        <h1>Clasificador de Residuos</h1>
-        {% if user %}
-            <p>Sesión: <strong>{{ user }}</strong> | <a href="{{ url_for('logout') }}">Cerrar sesión</a>
-            {% if user == 'admin' %} | <a href="{{ url_for('users') }}">Administrar usuarios</a>{% endif %}</p>
-        {% endif %}
-        <form action="/predict" method="post" enctype="multipart/form-data">
-            <input type="file" name="file" accept="image/*" required>
-            <br>
-            <button type="submit">Clasificar imagen</button>
-        </form>
-        {% if img_path %}
-            <img src="{{ img_path }}" alt="Imagen subida">
-        {% endif %}
-        {% if prediction %}
-            <h2>{{ prediction }}</h2>
-        {% endif %}
-    </div>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+/* fondo global (seguimos usando el verde reciclaje) */
+body {
+background-color: #95d5b2;
+margin: 0;
+font-family: 'Poppins', sans-serif;
+}
+
+/* Contenedor que ocupa la zona visible disponible y centra su contenido */
+.center-wrap {
+display: flex;
+justify-content: center; /* centra horizontal */
+align-items: center; /* centra vertical */
+min-height: calc(100vh - 120px); /* resta la barra superior (ajusta si tu barra tiene otro alto) */
+padding: 20px; /* espacio en móviles */
+box-sizing: border-box;
+}
+
+.card {
+background: white;
+border-radius: 15px;
+box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+text-align: center;
+width: 420px;
+max-width: 95%;
+padding: 40px;
+}
+
+h1 {
+color: #2d6a4f;
+font-size: 26px;
+margin-bottom: 25px; /* <--- Mantenemos el margen para separar del siguiente elemento */
+}
+
+p {
+font-size: 15px;
+color: #333;
+margin-bottom: 25px;
+}
+
+a {
+color: #2d6a4f;
+text-decoration: none;
+font-weight: 600;
+}
+
+a:hover {
+text-decoration: underline;
+}
+
+/* ESTILO AGREGADO/MODIFICADO: Centrar el input de archivo y el texto de archivo no seleccionado */
+/* Esto asume que el input[type="file"] y su etiqueta o texto asociado están en una línea */
+form {
+text-align: center;
+}
+
+input[type="file"] {
+margin: 20px 0;
+font-size: 15px;
+/* Puedes agregar display: block; y margin: 0 auto; si estuviera descentrado */
+}
+
+button {
+background: #2d6a4f;
+color: white;
+border: none;
+border-radius: 6px;
+padding: 12px 20px;
+font-size: 16px;
+cursor: pointer;
+transition: background 0.3s;
+width: 100%;
+}
+
+button:hover {
+ background: #1b4332;
+}
+
+img {
+ margin-top: 20px;
+max-width: 100%;
+border-radius: 10px;
+box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+h2 {
+ color: #1b4332;
+ margin-top: 20px;
+}
+
+/* Ajustes móviles */
+@media (max-width: 480px) {
+.card { padding: 24px; }
+ h1 { font-size: 20px; }
+}
+</style>
+
+<div class="center-wrap">
+<div class="card">
+<h1>Clasificador de Residuos</h1>
+
+{# ELIMINACIÓN: Se quita todo el bloque 'if user' que contenía las opciones de sesión #}
+<form action="/predict" method="post" enctype="multipart/form-data">
+<input type="file" name="file" accept="image/*" required>
+<button type="submit">Clasificar imagen</button>
+</form>
+
+{% if img_path %}
+<img src="{{ img_path }}" alt="Imagen subida">
+ {% endif %}
+
+{% if prediction %}
+<h2>{{ prediction }}</h2>
+{% endif %}
+</div>
+</div>
 {% endblock %}
