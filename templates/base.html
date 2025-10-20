@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Clasificador{% endblock %}</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 0; 
+            padding: 0; 
+            background: #f4f4f9; 
+        }
+
+        /* 🔹 Barra superior */
+        .navbar { 
+            background: #2d6a4f; /* Verde igual al botón de "Entrar" */
+            color: white; 
+            padding: 12px 30px; 
+            display: flex; 
+            align-items: center; 
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .brand a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 20px;
+            transition: color 0.3s ease;
+        }
+
+        .brand a:hover {
+            color: #b7e4c7; /* Verde claro al pasar el mouse */
+        }
+
+        .nav-right { 
+            margin-left: auto; 
+            display: flex; 
+            align-items: center; 
+        }
+
+        .nav-item { 
+            margin: 0 10px; 
+            position: relative; 
+        }
+
+        .top-link { 
+            color: white; 
+            text-decoration: none; 
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        .top-link:hover { 
+            color: #b7e4c7; /* Verde más claro */
+        }
+
+        /* 🔹 Dropdown (menú desplegable) */
+        .dropdown { 
+            position: relative; 
+        }
+
+        .dropdown-content { 
+            display: none; 
+            position: absolute; 
+            background: #40916c; /* Verde un poco más claro */
+            min-width: 180px; 
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2); 
+            border-radius: 8px;
+            z-index: 1; 
+            right: 0; 
+            overflow: hidden;
+        }
+
+        .dropdown-content a { 
+            color: white; 
+            padding: 12px 14px; 
+            text-decoration: none; 
+            display: block; 
+            transition: background 0.3s ease;
+        }
+
+        .dropdown-content a:hover { 
+            background: #52b788; 
+        }
+
+        .dropdown:hover .dropdown-content { 
+            display: block; 
+        }
+
+        /* 🔹 Contenedor principal */
+        .container { 
+            padding: 30px; 
+        }
+
+        .card { 
+            background: white; 
+            padding: 20px; 
+            border-radius: 12px; 
+            box-shadow: 0 0 10px rgba(0,0,0,0.1); 
+            display: inline-block; 
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .logo {
+            height: 40px;
+            width: auto;
+    }
+    </style>
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <div class="navbar">
+        <div class="brand">
+           <div class="brand">
+    <img src="{{ url_for('static', filename='reciclaje.png.jpg') }}" alt="Logo reciclaje" class="logo">
+    <span>Clasificador</span>
+</div>
+        </div>
+
+        <div class="nav-right">
+            {% if session.get('user') %}
+                <div class="nav-item">Bienvenido, <strong>{{ session.get('user') }}</strong></div>
+                <div class="nav-item dropdown">
+                    <a class="top-link" href="#">Menú ▾</a>
+                    <div class="dropdown-content">
+                        <a href="{{ url_for('index') }}">Inicio</a>
+                        <a href="#">Página 1</a>
+                        <a href="#">Página 2</a>
+                        {% if session.get('user') == 'admin' %}
+                            <a href="{{ url_for('users') }}">Administrar usuarios</a>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="nav-item"><a class="top-link" href="{{ url_for('logout') }}">Cerrar sesión</a></div>
+            {% else %}
+                <div class="nav-item"><a class="top-link" href="{{ url_for('login') }}">Iniciar sesión</a></div>
+                <div class="nav-item"><a class="top-link" href="{{ url_for('register') }}">Registrar</a></div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

@@ -1,49 +1,9 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Clasificador de Residuos</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background: #f4f4f9;
-            margin: 0;
-            padding: 30px;
-        }
-        .container {
-            background: white;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.2);
-            display: inline-block;
-        }
-        img {
-            width: 250px;
-            border-radius: 10px;
-            margin-top: 10px;
-        }
-        input[type=file] {
-            margin: 15px;
-        }
-        button {
-            padding: 10px 20px;
-            border: none;
-            background: #4CAF50;
-            color: white;
-            border-radius: 10px;
-            cursor: pointer;
-        }
-        button:hover {
-            background: #45a049;
-        }
-        h2 {
-            color: #333;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
+{% extends 'base.html' %}
+
+{% block title %}Inicio - Clasificador{% endblock %}
+
+{% block content %}
+    <div class="card">
         <h1>Clasificador de Residuos</h1>
         {% if user %}
             <p>Sesión: <strong>{{ user }}</strong> | <a href="{{ url_for('logout') }}">Cerrar sesión</a>
@@ -61,5 +21,4 @@
             <h2>{{ prediction }}</h2>
         {% endif %}
     </div>
-</body>
-</html>
+{% endblock %}
