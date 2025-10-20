@@ -35,16 +35,16 @@
 
         .brand {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
+            align-items: center; /* centra verticalmente logo y texto */
+            gap: 12px;
         }
 
         .logo {
-            height: 40px;
+            height: 40px; /* igual que el login */
             width: auto;
+            vertical-align: middle;
+            margin-top: 0; /* asegura que no se desplace hacia abajo */
         }
-
         /* 🔹 Texto “CLASIFICADOR” más elegante y separado */
         .brand span {
             font-family: 'Montserrat Alternates', sans-serif;
