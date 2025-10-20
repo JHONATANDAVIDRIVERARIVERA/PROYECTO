@@ -1,9 +1,20 @@
-{% extends 'base.html' %}
-
-{% block title %}Registrar - Clasificador{% endblock %}
-
-{% block content %}
-    <div class="card" style="max-width:360px; margin:auto; text-align:left;">
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Registro - Clasificador</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; background: #f4f4f9; padding: 40px; }
+        .container { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 0 10px rgba(0,0,0,0.1); display: inline-block; }
+        input { padding: 8px; margin: 8px 0; width: 100%; box-sizing: border-box; }
+        button { padding: 10px 20px; border: none; background: #4CAF50; color: white; border-radius: 8px; cursor: pointer; }
+        .msg { margin: 10px 0; }
+        .error { color: #a94442; }
+        .success { color: #3c763d; }
+    </style>
+</head>
+<body>
+    <div class="container">
         <h1>Crear cuenta</h1>
         {% with messages = get_flashed_messages(with_categories=true) %}
           {% if messages %}
@@ -23,4 +34,5 @@
         </form>
         <p><a href="{{ url_for('login') }}">Volver al login</a></p>
     </div>
-{% endblock %}
+</body>
+</html>

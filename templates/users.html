@@ -1,30 +1,42 @@
-{% extends 'base.html' %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Usuarios - Admin</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f4f9; padding: 30px; }
+        .container { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 8px rgba(0,0,0,0.1); max-width: 600px; margin: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 8px 10px; border-bottom: 1px solid #eee; text-align: left; }
+        input { padding: 8px; width: 100%; margin: 6px 0; box-sizing: border-box; }
+        button { padding: 8px 12px; background: #4CAF50; color: white; border: none; border-radius: 6px; }
+        .success { color: #3c763d; }
+        .error { color: #a94442; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Administración de usuarios</h1>
+        <p><a href="{{ url_for('index') }}">Volver al inicio</a> | <a href="{{ url_for('logout') }}">Cerrar sesión</a></p>
 
-{% block title %}Usuarios - Admin{% endblock %}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div>
+              {% for category, message in messages %}
+                <div class="{{ category }}">{{ message }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
 
-{% block content %}
-  <div class="card" style="max-width:800px;">
-    <h1>Administración de usuarios</h1>
-    <p><a href="{{ url_for('index') }}">Volver al inicio</a> | <a href="{{ url_for('logout') }}">Cerrar sesión</a></p>
+        <h3>Crear nuevo usuario</h3>
+        <form method="post">
+            <input type="text" name="username" placeholder="Usuario" required>
+            <input type="password" name="password" placeholder="Contraseña" required>
+            <button type="submit">Crear usuario</button>
+        </form>
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-      <div>
-        {% for category, message in messages %}
-        <div class="{{ category }}">{{ message }}</div>
-        {% endfor %}
-      </div>
-      {% endif %}
-    {% endwith %}
-
-    <h3>Crear nuevo usuario</h3>
-    <form method="post">
-      <input type="text" name="username" placeholder="Usuario" required>
-      <input type="password" name="password" placeholder="Contraseña" required>
-      <button type="submit">Crear usuario</button>
-    </form>
-
-    <h3>Usuarios existentes</h3>
+        <h3>Usuarios existentes</h3>
     <table>
       <thead><tr><th>ID</th><th>Usuario</th><th>Acciones</th></tr></thead>
       <tbody>
@@ -45,5 +57,6 @@
         {% endfor %}
       </tbody>
     </table>
-  </div>
-{% endblock %}
+    </div>
+</body>
+</html>
