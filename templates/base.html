@@ -142,8 +142,8 @@
                     <a class="top-link" href="#">Menú ▾</a>
                     <div class="dropdown-content">
                         <a href="{{ url_for('index') }}">Inicio</a>
-                        <a href="{{ url_for('pagina1') }}">Página 1</a>
-                        <a href="{{ url_for('pagina2') }}">Página 2</a>
+                        <a href="{{ url_for('pagina1') }}">Fase del negocio</a>
+                        <a href="{{ url_for('pagina2') }}">Fase de los datos e ingenieria de datos</a>
                         {% if session.get('user') == 'admin' %}
                             <a href="{{ url_for('users') }}">Administrar usuarios</a>
                         {% endif %}

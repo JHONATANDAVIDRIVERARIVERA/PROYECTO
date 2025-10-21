@@ -4,121 +4,160 @@
 
 {% block content %}
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
 
-/* fondo global (seguimos usando el verde reciclaje) */
+/* 🔹 Fondo general */
 body {
-background-color: #95d5b2;
-margin: 0;
-font-family: 'Poppins', sans-serif;
+    background-color: #95d5b2; /* verde reciclaje */
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
 }
 
-/* Contenedor que ocupa la zona visible disponible y centra su contenido */
+/* 🔹 Centrado vertical y horizontal */
 .center-wrap {
-display: flex;
-justify-content: center; /* centra horizontal */
-align-items: center; /* centra vertical */
-min-height: calc(100vh - 120px); /* resta la barra superior (ajusta si tu barra tiene otro alto) */
-padding: 20px; /* espacio en móviles */
-box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 120px);
+    padding: 20px;
+    box-sizing: border-box;
 }
 
+/* 🔹 Tarjeta principal */
 .card {
-background: white;
-border-radius: 15px;
-box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-text-align: center;
-width: 420px;
-max-width: 95%;
-padding: 40px;
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    text-align: center;
+    width: 420px;
+    max-width: 95%;
+    padding: 45px 40px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+}
+
+/* 🔹 Título */
 h1 {
-color: #2d6a4f;
-font-size: 26px;
-margin-bottom: 25px; /* <--- Mantenemos el margen para separar del siguiente elemento */
+    color: #2d6a4f;
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 20px;
 }
 
+/* 🔹 Texto informativo */
 p {
-font-size: 15px;
-color: #333;
-margin-bottom: 25px;
+    font-size: 15px;
+    color: #444;
+    margin-bottom: 25px;
 }
 
+/* 🔹 Enlaces */
 a {
-color: #2d6a4f;
-text-decoration: none;
-font-weight: 600;
+    color: #2d6a4f;
+    text-decoration: none;
+    font-weight: 600;
 }
 
 a:hover {
-text-decoration: underline;
+    text-decoration: underline;
 }
 
-/* ESTILO AGREGADO/MODIFICADO: Centrar el input de archivo y el texto de archivo no seleccionado */
-/* Esto asume que el input[type="file"] y su etiqueta o texto asociado están en una línea */
+/* 🔹 Formulario */
 form {
-text-align: center;
+    text-align: center;
 }
 
+/* 🔹 Input de archivo */
 input[type="file"] {
-margin: 20px 0;
-font-size: 15px;
-/* Puedes agregar display: block; y margin: 0 auto; si estuviera descentrado */
+    margin: 20px 0;
+    font-size: 15px;
+    background-color: #f1f1f1;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    width: 100%;
+    cursor: pointer;
+    transition: border-color 0.3s;
 }
 
+input[type="file"]:hover {
+    border-color: #2d6a4f;
+}
+
+/* 🔹 Botón principal */
 button {
-background: #2d6a4f;
-color: white;
-border: none;
-border-radius: 6px;
-padding: 12px 20px;
-font-size: 16px;
-cursor: pointer;
-transition: background 0.3s;
-width: 100%;
+    background: #2d6a4f;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+    width: 100%;
+    font-weight: 500;
 }
 
 button:hover {
- background: #1b4332;
+    background: #1b4332;
+    transform: scale(1.03);
 }
 
+/* 🔹 Imagen de resultado */
 img {
- margin-top: 20px;
-max-width: 100%;
-border-radius: 10px;
-box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    margin-top: 25px;
+    max-width: 100%;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+    transition: transform 0.3s ease;
 }
 
+img:hover {
+    transform: scale(1.02);
+}
+
+/* 🔹 Resultado de predicción */
 h2 {
- color: #1b4332;
- margin-top: 20px;
+    color: #1b4332;
+    margin-top: 20px;
+    font-size: 22px;
+    font-weight: 600;
 }
 
-/* Ajustes móviles */
+/* 🔹 Ajustes móviles */
 @media (max-width: 480px) {
-.card { padding: 24px; }
- h1 { font-size: 20px; }
+    .card {
+        padding: 28px;
+    }
+    h1 {
+        font-size: 22px;
+    }
+    button {
+        font-size: 15px;
+    }
 }
 </style>
 
 <div class="center-wrap">
-<div class="card">
-<h1>Clasificador de Residuos</h1>
+    <div class="card">
+        <h1>Clasificador de Residuos</h1>
 
-{# ELIMINACIÓN: Se quita todo el bloque 'if user' que contenía las opciones de sesión #}
-<form action="/predict" method="post" enctype="multipart/form-data">
-<input type="file" name="file" accept="image/*" required>
-<button type="submit">Clasificar imagen</button>
-</form>
+        <form action="/predict" method="post" enctype="multipart/form-data">
+            <input type="file" name="file" accept="image/*" required>
+            <button type="submit">Clasificar imagen</button>
+        </form>
 
-{% if img_path %}
-<img src="{{ img_path }}" alt="Imagen subida">
- {% endif %}
+        {% if img_path %}
+        <img src="{{ img_path }}" alt="Imagen subida">
+        {% endif %}
 
-{% if prediction %}
-<h2>{{ prediction }}</h2>
-{% endif %}
-</div>
+        {% if prediction %}
+        <h2>{{ prediction }}</h2>
+        {% endif %}
+    </div>
 </div>
 {% endblock %}
