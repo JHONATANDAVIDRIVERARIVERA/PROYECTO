@@ -1,17 +1,226 @@
-{% extends 'base.html' %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fase 1 - Entendimiento del Negocio</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
 
-{% block title %}Página 1{% endblock %}
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background-color: #95d5b2; /* Verde reciclaje */
+      color: #333;
+    }
 
-{% block content %}
-<div style="max-width:800px;margin:auto;background:white;padding:20px;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,0.06)">
-    <h1>Página 1</h1>
-    <p>Esta es la primera página de ejemplo. Puedes personalizar este contenido según tus necesidades.</p>
-    
-    <div class="card mt-4">
-        <div class="card-body">
-            <h5 class="card-title">Sección de ejemplo</h5>
-            <p class="card-text">Aquí puedes añadir el contenido que necesites para esta página.</p>
-        </div>
+    /* Barra superior */
+    header {
+      background-color: #2d6a4f;
+      color: white;
+      text-align: center;
+      padding: 15px 0;
+      font-size: 20px;
+      font-weight: 600;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      border-bottom-left-radius: 10px;
+      border-bottom-right-radius: 10px;
+    }
+
+    header button {
+      background-color: #40916c;
+      border: none;
+      color: white;
+      font-weight: 600;
+      padding: 8px 18px;
+      font-size: 15px;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    header button:hover {
+      background-color: #1b4332;
+      transform: scale(1.05);
+    }
+
+    main {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 30px;
+      margin: 40px 20px;
+      flex-wrap: wrap;
+    }
+
+    /* Contenido principal */
+    .content {
+      background: #ffffff;
+      padding: 35px;
+      border-radius: 20px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+      width: 65%;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .content:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+    }
+
+    /* Barra lateral */
+    .sidebar {
+      background: #d8f3dc;
+      border-radius: 15px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+      padding: 25px;
+      width: 23%;
+      height: fit-content;
+    }
+
+    .sidebar h3 {
+      color: #1b4332;
+      border-bottom: 2px solid #74c69d;
+      padding-bottom: 8px;
+      margin-bottom: 15px;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .sidebar ul li {
+      margin: 12px 0;
+    }
+
+    .sidebar ul li a {
+      text-decoration: none;
+      color: #2d6a4f;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+
+    .sidebar ul li a:hover {
+      color: #1b4332;
+      font-weight: 600;
+      text-decoration: underline;
+    }
+
+    h2 {
+      color: #2d6a4f;
+      border-left: 5px solid #2d6a4f;
+      padding-left: 10px;
+      margin-top: 30px;
+      font-weight: 600;
+    }
+
+    p {
+      line-height: 1.7;
+      text-align: justify;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      color: #555;
+      font-size: 14px;
+    }
+
+    @media (max-width: 900px) {
+      main {
+        flex-direction: column;
+        align-items: center;
+      }
+      .content, .sidebar {
+        width: 90%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <button onclick="window.location.href='{{ url_for('index') }}'">Menú</button>
+    <span>Fase 1: Entendimiento del Negocio</span>
+    <button onclick="window.location.href='{{ url_for('pagina2') }}'">Fase 2</button>
+  </header>
+
+  <main>
+    <div class="content">
+      <h2 id="contexto">Contexto del Proyecto</h2>
+      <p>
+        Este proyecto busca desarrollar un modelo inteligente capaz de identificar y clasificar residuos sólidos mediante
+        el uso de redes neuronales convolucionales. Su propósito principal es contribuir a la gestión eficiente de residuos
+        y al fortalecimiento de prácticas ambientales sostenibles en diferentes entornos.
+      </p>
+
+      <h2 id="objetivo">Objetivo del Negocio</h2>
+      <p>
+        El objetivo es crear un sistema automático que, a partir de imágenes captadas en tiempo real, determine el tipo de
+        residuo (orgánico, plástico, vidrio, metal, cartón o papel) mediante una red neuronal DenseNet121 entrenada con TensorFlow 2.x.
+      </p>
+
+      <h2 id="importancia">Importancia y Beneficios</h2>
+      <p>
+        Implementar este modelo permite optimizar los procesos de separación de desechos, reducir errores humanos y fortalecer
+        la educación ambiental. También contribuye al desarrollo de una economía circular y al aprovechamiento responsable
+        de los recursos naturales.
+      </p>
+
+      <h2 id="requerimientos">Requerimientos del Sistema</h2>
+      <p><strong>Entrada del sistema:</strong> Imágenes de residuos captadas en diferentes condiciones de iluminación y ángulos.</p>
+      <p><strong>Procesamiento:</strong> Red convolucional DenseNet121 entrenada con TensorFlow 2.x, utilizando técnicas de aumento de datos y normalización.</p>
+      <p><strong>Salida del sistema:</strong> Etiqueta de clasificación correspondiente al tipo de residuo identificado.</p>
+
+      <h2 id="actores">Actores Involucrados</h2>
+      <p>
+        Los actores principales incluyen desarrolladores, analistas de datos, estudiantes y docentes comprometidos con el uso de la
+        inteligencia artificial para la sostenibilidad. También participan entidades ambientales que buscan mejorar la gestión de residuos.
+      </p>
+
+      <h2 id="indicadores">Indicadores de Éxito</h2>
+      <p>
+        Los indicadores incluyen la precisión del modelo en la clasificación de residuos, la reducción del error humano en la separación
+        y la mejora del tiempo de respuesta en los procesos de reciclaje automatizado.
+      </p>
+
+      <h2 id="conclusion">Conclusión</h2>
+      <p>
+        La Fase 1 permitió establecer la relevancia del proyecto en el contexto ambiental actual y definir los objetivos técnicos
+        y sociales del modelo. A partir de este entendimiento, se podrá avanzar hacia la fase de procesamiento e ingeniería de datos.
+      </p>
+
+      <h2 id="referencias">Referencias</h2>
+      <ul>
+        <li>Park, S., & Kim, H. (2020). <em>Deep Learning for Waste Classification: A Review</em>. Journal of Environmental Informatics.</li>
+        <li>TensorFlow Documentation. (2024). <em>Transfer Learning with DenseNet121</em>. Google Developers.</li>
+        <li>Ministerio de Ambiente y Desarrollo Sostenible. (2023). <em>Guía Nacional de Clasificación de Residuos</em>. Bogotá, Colombia.</li>
+        <li>Chollet, F. (2021). <em>Deep Learning with Python</em>. Manning Publications.</li>
+      </ul>
+
+      <footer>
+        Proyecto: Clasificación de Residuos con DenseNet121 | Fase 1 - Entendimiento del Negocio
+      </footer>
     </div>
-</div>
-{% endblock %}
+
+    <div class="sidebar">
+      <h3>Contenido</h3>
+      <ul>
+        <li><a href="#contexto">Contexto del proyecto</a></li>
+        <li><a href="#objetivo">Objetivo del negocio</a></li>
+        <li><a href="#importancia">Importancia y beneficios</a></li>
+        <li><a href="#requerimientos">Requerimientos</a></li>
+        <li><a href="#actores">Actores involucrados</a></li>
+        <li><a href="#indicadores">Indicadores de éxito</a></li>
+        <li><a href="#conclusion">Conclusión</a></li>
+        <li><a href="#referencias">Referencias</a></li>
+      </ul>
+    </div>
+  </main>
+</body>
+</html>

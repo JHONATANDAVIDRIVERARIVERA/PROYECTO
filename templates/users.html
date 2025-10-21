@@ -3,205 +3,245 @@
 {% block title %}Administrar usuarios - Clasificador{% endblock %}
 
 {% block content %}
-
 <style>
-    body {
-        background-color: #95d5b2; /* Fondo verde reciclaje */
-        margin: 0;
-        font-family: 'Poppins', sans-serif;
-    }
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
 
-    .user-container {
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
-        min-height: calc(100vh - 120px);
-        padding: 40px 20px;
-        box-sizing: border-box;
-    }
+/* 🔹 Fondo con degradado verde suave */
+body {
+    background: linear-gradient(135deg, #74c69d, #95d5b2);
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+}
 
+/* 🔹 Contenedor principal */
+.user-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: calc(100vh - 120px);
+    padding: 40px 20px;
+    box-sizing: border-box;
+}
+
+/* 🔹 Tarjeta de administración */
+.user-card {
+    background: #ffffff;
+    padding: 45px;
+    border-radius: 20px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    width: 750px;
+    max-width: 95%;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.user-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.18);
+}
+
+/* 🔹 Título principal */
+h1 {
+    color: #2d6a4f;
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+/* 🔹 Subtítulos */
+h3 {
+    color: #1b4332;
+    margin-top: 35px;
+    margin-bottom: 15px;
+    border-left: 4px solid #2d6a4f;
+    padding-left: 10px;
+    font-weight: 600;
+}
+
+/* 🔹 Enlaces */
+a {
+    color: #2d6a4f;
+    text-decoration: none;
+    font-weight: 600;
+}
+a:hover {
+    text-decoration: underline;
+}
+
+/* 🔹 Mensajes flash */
+.msg {
+    margin-bottom: 20px;
+}
+
+.error, .success {
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 500;
+}
+.error {
+    color: #b02a37;
+    background: #f8d7da;
+    border-left: 5px solid #b02a37;
+}
+.success {
+    color: #0f5132;
+    background: #d1e7dd;
+    border-left: 5px solid #2d6a4f;
+}
+
+/* 🔹 Formulario de creación */
+form {
+    margin-bottom: 25px;
+}
+
+input[type="text"], input[type="password"] {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 1.5px solid #ccc;
+    border-radius: 8px;
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+input[type="text"]:focus, input[type="password"]:focus {
+    border-color: #2d6a4f;
+    box-shadow: 0 0 5px rgba(45,106,79,0.3);
+}
+
+/* 🔹 Botones */
+button {
+    background: #2d6a4f;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 18px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+button:hover {
+    background: #1b4332;
+    transform: scale(1.03);
+}
+
+/* 🔹 Tabla de usuarios */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+th, td {
+    padding: 12px 15px;
+    text-align: left;
+    font-size: 15px;
+}
+
+th {
+    background: #2d6a4f;
+    color: #fff;
+    font-weight: 500;
+}
+
+tr:nth-child(even) {
+    background: #f8f9fa;
+}
+
+tr:hover {
+    background: #edfdf3;
+}
+
+/* 🔹 Estilo para botón de eliminar */
+form[action*="delete_user"] button {
+    background: #b02a37;
+    border-radius: 6px;
+    padding: 8px 14px;
+}
+form[action*="delete_user"] button:hover {
+    background: #7b1e26;
+}
+
+/* 🔹 Responsivo */
+@media (max-width: 600px) {
     .user-card {
-        background: white;
-        padding: 40px;
-        border-radius: 15px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-        width: 700px;
-        max-width: 95%;
+        padding: 25px;
     }
 
-    h1 {
-        color: #2d6a4f;
-        font-size: 26px;
-        margin-bottom: 20px;
-        text-align: center;
-    }
-
-    h3 {
-        color: #1b4332;
-        margin-top: 30px;
-        margin-bottom: 15px;
-    }
-
-    a {
-        color: #2d6a4f;
-        text-decoration: none;
-        font-weight: 600;
-    }
-
-    a:hover {
-        text-decoration: underline;
-    }
-
-    /* Mensajes flash */
-    .msg {
-        margin-bottom: 15px;
-    }
-
-    .error {
-        color: #b02a37;
-        background: #f8d7da;
-        padding: 10px;
-        border-radius: 6px;
-    }
-
-    .success {
-        color: #0f5132;
-        background: #d1e7dd;
-        padding: 10px;
-        border-radius: 6px;
-    }
-
-    /* Formulario */
-    form {
-        margin-bottom: 20px;
-    }
-
-    input[type="text"], input[type="password"] {
-        width: 100%;
-        padding: 12px;
-        margin: 8px 0;
-        border: 1px solid #ccc;
-        border-radius: 6px;
-        font-size: 15px;
-        outline: none;
-        transition: border-color 0.3s;
-    }
-
-    input[type="text"]:focus, input[type="password"]:focus {
-        border-color: #2d6a4f;
-    }
-
-    button {
-        background: #2d6a4f;
-        color: white;
-        border: none;
-        border-radius: 6px;
-        padding: 10px 16px;
-        cursor: pointer;
-        font-size: 15px;
-        transition: background 0.3s;
-    }
-
-    button:hover {
-        background: #1b4332;
-    }
-
-    /* Tabla */
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 15px;
-    }
-
-    th, td {
-        padding: 10px;
-        border-bottom: 1px solid #eee;
-        text-align: left;
-        font-size: 15px;
+    table, thead, tbody, th, td, tr {
+        display: block;
     }
 
     th {
-        background: #b7e4c7;
-        color: #1b4332;
+        display: none;
     }
 
-    tr:hover {
-        background: #f9f9f9;
+    td {
+        padding: 10px 0;
+        border-bottom: 1px solid #ddd;
     }
 
-    /* Responsive */
-    @media (max-width: 600px) {
-        .user-card {
-            padding: 25px;
-        }
-
-        table, thead, tbody, th, td, tr {
-            display: block;
-        }
-
-        th {
-            display: none;
-        }
-
-        td {
-            padding: 10px 0;
-            border-bottom: 1px solid #ddd;
-        }
-
-        td::before {
-            content: attr(data-label);
-            font-weight: 600;
-            color: #2d6a4f;
-            display: block;
-        }
+    td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: #2d6a4f;
+        display: block;
+        margin-bottom: 5px;
     }
+}
 </style>
 
 <div class="user-container">
     <div class="user-card">
-        <h1>Administración de usuarios</h1>
+        <h1>Administración de Usuarios</h1>
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
         <div class="msg">
-          {% for category, message in messages %}
+            {% for category, message in messages %}
             <div class="{{ category }}">{{ message }}</div>
-          {% endfor %}
+            {% endfor %}
         </div>
-      {% endif %}
-    {% endwith %}
+        {% endif %}
+        {% endwith %}
 
-    <h3>Crear nuevo usuario</h3>
-    <form method="post">
-        <input type="text" name="username" placeholder="Usuario" required>
-        <input type="password" name="password" placeholder="Contraseña" required>
-        <button type="submit">Crear usuario</button>
-    </form>
+        <h3>Crear nuevo usuario</h3>
+        <form method="post">
+            <input type="text" name="username" placeholder="Usuario" required>
+            <input type="password" name="password" placeholder="Contraseña" required>
+            <button type="submit">Crear usuario</button>
+        </form>
 
-    <h3>Usuarios existentes</h3>
-    <table>
-        <thead>
-            <tr><th>ID</th><th>Usuario</th><th>Acciones</th></tr>
-        </thead>
-        <tbody>
-            {% for u in users %}
-            <tr>
-                <td data-label="ID">{{ u['id'] }}</td>
-                <td data-label="Usuario">{{ u['username'] }}</td>
-                <td data-label="Acciones">
-                    {% if u.username != 'admin' and u.username != user %}
+        <h3>Usuarios existentes</h3>
+        <table>
+            <thead>
+                <tr><th>ID</th><th>Usuario</th><th>Acciones</th></tr>
+            </thead>
+            <tbody>
+                {% for u in users %}
+                <tr>
+                    <td data-label="ID">{{ u['id'] }}</td>
+                    <td data-label="Usuario">{{ u['username'] }}</td>
+                    <td data-label="Acciones">
+                        {% if u.username != 'admin' and u.username != user %}
                         <form method="post" action="{{ url_for('delete_user', user_id=u['id']) }}" style="display:inline">
                             <button type="submit" onclick="return confirm('¿Eliminar usuario {{ u.username }}?')">Eliminar</button>
                         </form>
-                    {% else %}
+                        {% else %}
                         &mdash;
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
-
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 {% endblock %}

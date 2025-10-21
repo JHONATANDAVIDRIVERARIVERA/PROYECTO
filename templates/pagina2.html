@@ -1,17 +1,220 @@
-{% extends 'base.html' %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fase 2 - Análisis y Diseño del Sistema</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
 
-{% block title %}Página 2{% endblock %}
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background-color: #95d5b2; /* Fondo verde reciclaje */
+      color: #333;
+    }
 
-{% block content %}
-<div style="max-width:800px;margin:auto;background:white;padding:20px;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,0.06)">
-    <h1>Página 2</h1>
-    <p>Esta es la segunda página de ejemplo. Puedes personalizar este contenido según tus necesidades.</p>
-    
-    <div class="card mt-4">
-        <div class="card-body">
-            <h5 class="card-title">Otra sección de ejemplo</h5>
-            <p class="card-text">Aquí puedes añadir el contenido que necesites para esta página.</p>
-        </div>
+    /* Barra superior */
+    header {
+      background-color: #2d6a4f;
+      color: white;
+      text-align: center;
+      padding: 15px 0;
+      font-size: 20px;
+      font-weight: 600;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      border-bottom-left-radius: 10px;
+      border-bottom-right-radius: 10px;
+    }
+
+    header button {
+      background-color: #40916c;
+      border: none;
+      color: white;
+      font-weight: 600;
+      padding: 8px 18px;
+      font-size: 15px;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    header button:hover {
+      background-color: #1b4332;
+      transform: scale(1.05);
+    }
+
+    main {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 30px;
+      margin: 40px 20px;
+      flex-wrap: wrap;
+    }
+
+    /* Contenido principal */
+    .content {
+      background: #ffffff;
+      padding: 35px;
+      border-radius: 20px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+      width: 65%;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .content:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+    }
+
+    /* Barra lateral */
+    .sidebar {
+      background: #d8f3dc;
+      border-radius: 15px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+      padding: 25px;
+      width: 23%;
+      height: fit-content;
+    }
+
+    .sidebar h3 {
+      color: #1b4332;
+      border-bottom: 2px solid #74c69d;
+      padding-bottom: 8px;
+      margin-bottom: 15px;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .sidebar ul li {
+      margin: 12px 0;
+    }
+
+    .sidebar ul li a {
+      text-decoration: none;
+      color: #2d6a4f;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+
+    .sidebar ul li a:hover {
+      color: #1b4332;
+      font-weight: 600;
+      text-decoration: underline;
+    }
+
+    h2 {
+      color: #2d6a4f;
+      border-left: 5px solid #2d6a4f;
+      padding-left: 10px;
+      margin-top: 30px;
+      font-weight: 600;
+    }
+
+    p {
+      line-height: 1.7;
+      text-align: justify;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      color: #555;
+      font-size: 14px;
+    }
+
+    @media (max-width: 900px) {
+      main {
+        flex-direction: column;
+        align-items: center;
+      }
+      .content, .sidebar {
+        width: 90%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <button onclick="window.location.href='{{ url_for('index') }}'">Menú</button>
+    <span>Fase 2: Análisis y Diseño del Sistema</span>
+    <button onclick="window.location.href='{{ url_for('pagina1') }}'">Fase 1</button>
+  </header>
+
+  <main>
+    <div class="content">
+      <h2 id="analisis">Análisis del Sistema</h2>
+      <p>
+        En esta fase se realiza un estudio detallado de los requisitos funcionales y no funcionales del sistema,
+        identificando los flujos de información, los procesos principales y las interacciones entre los distintos actores.
+        El análisis permite establecer una estructura sólida que servirá como base para el diseño e implementación.
+      </p>
+
+      <h2 id="modelado">Modelado de Procesos</h2>
+      <p>
+        Se emplean diagramas de flujo y casos de uso para representar el comportamiento del sistema. Estos modelos facilitan
+        la comprensión de cómo los usuarios interactúan con el software y cómo se gestionan los datos desde la captura de la
+        imagen hasta la clasificación del residuo.
+      </p>
+
+      <h2 id="arquitectura">Diseño de la Arquitectura</h2>
+      <p>
+        La arquitectura propuesta se basa en una estructura cliente-servidor, donde la interfaz web permite al usuario subir imágenes
+        y visualizar los resultados de clasificación, mientras que el servidor procesa las imágenes mediante la red neuronal
+        DenseNet121 entrenada con TensorFlow.
+      </p>
+
+      <h2 id="bd">Diseño de Base de Datos</h2>
+      <p>
+        Se propone una base de datos relacional que almacene la información de las imágenes, las predicciones realizadas, las fechas de procesamiento
+        y los usuarios que realizaron las pruebas. Esto garantiza trazabilidad y facilita la evaluación del rendimiento del modelo.
+      </p>
+
+      <h2 id="ui">Diseño de Interfaz de Usuario</h2>
+      <p>
+        La interfaz está diseñada para ser intuitiva y responsiva, priorizando la accesibilidad y la visualización clara de resultados.
+        Se emplean colores que refuercen la temática ecológica y un flujo de navegación simple para mejorar la experiencia del usuario.
+      </p>
+
+      <h2 id="conclusion">Conclusión</h2>
+      <p>
+        Esta fase permite consolidar la estructura del sistema, integrando los requisitos identificados con un diseño técnico funcional y escalable.
+        Con ello se asegura que la implementación posterior mantenga coherencia con los objetivos del proyecto.
+      </p>
+
+      <h2 id="referencias">Referencias</h2>
+      <ul>
+        <li>Pressman, R. (2010). <i>Ingeniería del Software: Un enfoque práctico</i>. McGraw-Hill.</li>
+        <li>Ian Sommerville (2016). <i>Software Engineering</i>. Pearson Education.</li>
+        <li>Documentación oficial de TensorFlow 2.x — <a href="https://www.tensorflow.org/" target="_blank">www.tensorflow.org</a></li>
+      </ul>
+
+      <footer>
+        Proyecto: Clasificación de Residuos con DenseNet121 | Fase 2 - Análisis y Diseño del Sistema
+      </footer>
     </div>
-</div>
-{% endblock %}
+
+    <div class="sidebar">
+      <h3>Contenido</h3>
+      <ul>
+        <li><a href="#analisis">Análisis del sistema</a></li>
+        <li><a href="#modelado">Modelado de procesos</a></li>
+        <li><a href="#arquitectura">Diseño de la arquitectura</a></li>
+        <li><a href="#bd">Diseño de base de datos</a></li>
+        <li><a href="#ui">Diseño de interfaz</a></li>
+        <li><a href="#conclusion">Conclusión</a></li>
+        <li><a href="#referencias">Referencias</a></li>
+      </ul>
+    </div>
+  </main>
+</body>
+</html>

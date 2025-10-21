@@ -1,110 +1,127 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Registro - Clasificador</title>
+{% extends 'base.html' %}
 
-    <!-- 🔹 Fuente moderna y legible -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat+Alternates:wght@500;700&display=swap" rel="stylesheet">
+{% block title %}Registro - Clasificador{% endblock %}
 
-    <style>
-        body { 
-            font-family: 'Montserrat Alternates', sans-serif; 
-            text-align: center; 
-            background: #2d6a4f; /* Verde reciclaje */
-            padding: 40px; 
-            margin: 0;
+{% block content %}
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+    body {
+        background-color: #95d5b2; /* Verde reciclaje */
+        margin: 0;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .register-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: calc(100vh - 120px);
+        padding: 20px;
+    }
+
+    .register-card {
+        background: #fff;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        padding: 40px;
+        text-align: center;
+        width: 380px;
+        max-width: 95%;
+    }
+
+    h1 {
+        color: #2d6a4f;
+        margin-bottom: 25px;
+        font-size: 26px;
+        font-weight: 600;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+        width: 100%;
+        padding: 12px;
+        margin: 10px 0;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 15px;
+        outline: none;
+        transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    input[type="text"]:focus,
+    input[type="password"]:focus {
+        border-color: #2d6a4f;
+        box-shadow: 0 0 5px #95d5b2;
+    }
+
+    button {
+        width: 100%;
+        padding: 12px;
+        background: #2d6a4f;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 600;
+        transition: background 0.3s, transform 0.2s;
+    }
+
+    button:hover {
+        background: #1b4332;
+        transform: scale(1.02);
+    }
+
+    .msg {
+        margin-bottom: 15px;
+        text-align: left;
+    }
+
+    .error {
+        color: #b02a37;
+        background: #f8d7da;
+        padding: 10px;
+        border-radius: 6px;
+    }
+
+    .success {
+        color: #0f5132;
+        background: #d1e7dd;
+        padding: 10px;
+        border-radius: 6px;
+    }
+
+    p {
+        margin-top: 15px;
+        font-size: 14px;
+    }
+
+    a {
+        color: #2d6a4f;
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.3s;
+    }
+
+    a:hover {
+        color: #1b4332;
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+        .register-card {
+            padding: 25px;
         }
 
-        .container { 
-            background: #ffffff; 
-            padding: 30px 40px; 
-            border-radius: 16px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2); 
-            display: inline-block; 
-            max-width: 400px;
-            width: 100%;
+        h1 {
+            font-size: 22px;
         }
+    }
+</style>
 
-        h1 { 
-            color: #2d6a4f; 
-            margin-bottom: 20px; 
-            font-weight: 700;
-            letter-spacing: 1px;
-        }
-
-        input { 
-            padding: 10px; 
-            margin: 10px 0; 
-            width: 100%; 
-            border: 1px solid #ccc; 
-            border-radius: 8px; 
-            font-size: 14px;
-            box-sizing: border-box; 
-            transition: border 0.3s ease;
-        }
-
-        input:focus {
-            outline: none;
-            border: 1px solid #2d6a4f;
-            box-shadow: 0 0 5px #95d5b2;
-        }
-
-        button { 
-            padding: 12px 20px; 
-            border: none; 
-            background: #40916c; 
-            color: white; 
-            border-radius: 8px; 
-            cursor: pointer; 
-            font-size: 15px;
-            font-weight: 600;
-            transition: background 0.3s ease, transform 0.2s ease;
-            width: 100%;
-        }
-
-        button:hover { 
-            background: #52b788;
-            transform: scale(1.03);
-        }
-
-        p { 
-            margin-top: 15px; 
-        }
-
-        a { 
-            color: #2d6a4f; 
-            text-decoration: none; 
-            font-weight: 600;
-            transition: color 0.3s ease;
-        }
-
-        a:hover { 
-            color: #52b788; 
-        }
-
-        .msg { 
-            margin: 10px 0; 
-            font-size: 14px;
-        }
-
-        .error { 
-            color: #a94442; 
-            background: #f8d7da; 
-            padding: 8px; 
-            border-radius: 6px;
-        }
-
-        .success { 
-            color: #2d6a4f; 
-            background: #d1e7dd; 
-            padding: 8px; 
-            border-radius: 6px;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
+<div class="register-container">
+    <div class="register-card">
         <h1>Crear cuenta</h1>
 
         {% with messages = get_flashed_messages(with_categories=true) %}
@@ -124,7 +141,7 @@
             <button type="submit">Registrar</button>
         </form>
 
-        <p><a href="{{ url_for('login') }}">VOLVER A INICIAR SESION</a></p>
+        <p>¿Ya tienes cuenta? <a href="{{ url_for('login') }}">Inicia sesión aquí</a></p>
     </div>
-</body>
-</html>
+</div>
+{% endblock %}

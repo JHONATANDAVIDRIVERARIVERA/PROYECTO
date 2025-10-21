@@ -4,87 +4,143 @@
 
 {% block content %}
 <style>
-    body {
-        background-color: #95d5b2; /*  Verde reciclaje */
-        margin: 0;
-        font-family: Arial, sans-serif;
-    }
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
 
-    .login-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: calc(100vh - 120px); /* resta el espacio de la barra */
-    }
+body {
+    background-color: #95d5b2; /* verde reciclaje */
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+}
 
+/* Contenedor centrado */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: calc(100vh - 120px);
+    padding: 20px;
+}
+
+/* Tarjeta de login */
+.login-card {
+    background: #ffffff;
+    padding: 45px 40px;
+    border-radius: 20px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    text-align: center;
+    width: 360px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.login-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+}
+
+/* Título */
+.login-card h1 {
+    color: #2d6a4f;
+    margin-bottom: 25px;
+    font-size: 26px;
+    font-weight: 600;
+}
+
+/* Campos de texto */
+input[type="text"], input[type="password"] {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 15px;
+    outline: none;
+    transition: all 0.3s ease;
+    background-color: #f9f9f9;
+}
+
+input[type="text"]:focus, input[type="password"]:focus {
+    border-color: #2d6a4f;
+    background-color: #fff;
+    box-shadow: 0 0 0 3px rgba(45,106,79,0.15);
+}
+
+/* Botón */
+button {
+    width: 100%;
+    padding: 12px;
+    background: #2d6a4f;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+}
+
+button:hover {
+    background: #1b4332;
+    transform: scale(1.03);
+}
+
+/* Mensajes */
+.msg {
+    margin-bottom: 15px;
+}
+
+.error {
+    color: #b02a37;
+    background: #f8d7da;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 14px;
+    border-left: 4px solid #b02a37;
+}
+
+.success {
+    color: #0f5132;
+    background: #d1e7dd;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 14px;
+    border-left: 4px solid #0f5132;
+}
+
+/* Texto auxiliar (opcional) */
+.login-card p {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #555;
+}
+
+.login-card a {
+    color: #2d6a4f;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.login-card a:hover {
+    text-decoration: underline;
+}
+
+/* Responsividad */
+@media (max-width: 480px) {
     .login-card {
-        background: white;
-        padding: 40px;
-        border-radius: 15px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-        text-align: center;
-        width: 350px;
+        padding: 30px 25px;
+        width: 90%;
     }
 
     .login-card h1 {
-        color: #2d6a4f;
-        margin-bottom: 25px;
-        font-size: 26px;
+        font-size: 22px;
     }
-
-    input[type="text"], input[type="password"] {
-        width: 100%;
-        padding: 12px;
-        margin: 10px 0;
-        border: 1px solid #ccc;
-        border-radius: 6px;
-        font-size: 15px;
-        outline: none;
-        transition: border-color 0.3s;
-    }
-
-    input[type="text"]:focus, input[type="password"]:focus {
-        border-color: #2d6a4f;
-    }
-
-    button {
-        width: 100%;
-        padding: 12px;
-        background: #2d6a4f;
-        color: white;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 16px;
-        transition: background 0.3s;
-    }
-
-    button:hover {
-        background: #1b4332;
-    }
-
-    .msg {
-        margin-bottom: 15px;
-    }
-
-    .error {
-        color: #b02a37;
-        background: #f8d7da;
-        padding: 8px;
-        border-radius: 5px;
-    }
-
-    .success {
-        color: #0f5132;
-        background: #d1e7dd;
-        padding: 8px;
-        border-radius: 5px;
-    }
+}
 </style>
 
 <div class="login-container">
     <div class="login-card">
-        <h1>Iniciar sesión</h1>
+        <h1>Iniciar Sesión</h1>
+
         {% with messages = get_flashed_messages(with_categories=true) %}
           {% if messages %}
             <div class="msg">
@@ -100,6 +156,13 @@
             <input type="password" name="password" placeholder="Contraseña" required>
             <button type="submit">Entrar</button>
         </form>
+
+        <p style="margin-top: 20px; font-size: 14px;">
+    ¿No tienes cuenta?
+    <a href="{{ url_for('register') }}" style="color: #2d6a4f; font-weight: 600; text-decoration: none;">
+        Regístrate aquí
+    </a>
+</p>
     </div>
 </div>
 {% endblock %}
