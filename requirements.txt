@@ -4,3 +4,4 @@ Pillow
 werkzeug
 # TensorFlow es opcional. Si quieres usar el modelo real instala tensorflow o tensorflow-cpu según tu entorno.
 # tensorflow
+gunicorn
