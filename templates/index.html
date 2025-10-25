@@ -146,9 +146,19 @@ h2 {
     <div class="card">
         <h1>Clasificador de Residuos</h1>
 
-        <form action="/predict" method="post" enctype="multipart/form-data">
-            <input type="file" name="file" accept="image/*" required>
-            <button type="submit">Clasificar imagen</button>
+        <form id="uploadForm" action="/predict" method="post" enctype="multipart/form-data">
+            <!-- 📁 Subir imagen desde galería -->
+            <input type="file" id="fileInput" name="file" accept="image/*" required>
+
+            <!-- 📸 Cámara -->
+            <div style="margin-top: 15px;">
+                <button type="button" id="startCamera">Activar cámara</button>
+                <button type="button" id="takePhoto" style="display: none;">Tomar foto</button>
+                <video id="camera" autoplay playsinline style="display:none; width:100%; border-radius:12px; margin-top:15px;"></video>
+                <canvas id="canvas" style="display:none;"></canvas>
+            </div>
+
+            <button type="submit" style="margin-top:15px;">Clasificar imagen</button>
         </form>
 
         {% if img_path %}
@@ -160,4 +170,52 @@ h2 {
         {% endif %}
     </div>
 </div>
+
+<!-- 🎥 Script para la cámara -->
+<script>
+const startBtn = document.getElementById('startCamera');
+const takePhotoBtn = document.getElementById('takePhoto');
+const video = document.getElementById('camera');
+const canvas = document.getElementById('canvas');
+const fileInput = document.getElementById('fileInput');
+let stream;
+
+// Activar cámara
+startBtn.addEventListener('click', async () => {
+    try {
+        stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        video.srcObject = stream;
+        video.style.display = 'block';
+        takePhotoBtn.style.display = 'inline-block';
+        startBtn.style.display = 'none';
+        fileInput.style.display = 'none';
+    } catch (err) {
+        alert("Error al acceder a la cámara: " + err.message);
+    }
+});
+
+// Tomar foto y asignarla al input
+takePhotoBtn.addEventListener('click', () => {
+    const context = canvas.getContext('2d');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    context.drawImage(video, 0, 0);
+
+    canvas.toBlob(blob => {
+        const file = new File([blob], "captura.jpg", { type: "image/jpeg" });
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        fileInput.files = dataTransfer.files;
+    });
+
+    // Apagar cámara
+    stream.getTracks().forEach(track => track.stop());
+    video.style.display = 'none';
+    takePhotoBtn.style.display = 'none';
+    startBtn.style.display = 'inline-block';
+    fileInput.style.display = 'block';
+    alert("📸 Foto capturada. Ahora presiona 'Clasificar imagen'.");
+});
+</script>
+
 {% endblock %}
