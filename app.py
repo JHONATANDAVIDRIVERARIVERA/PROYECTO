@@ -85,6 +85,46 @@ MODEL_PATH = 'garbage_model.h5'
 # Debes usar las mismas clases detectadas en el entrenamiento
 CLASS_NAMES = ['cardboard', 'glass', 'metal', 'paper', 'plastic', 'trash']
 
+# Diccionario con información de cada tipo de residuo
+INFO_RESIDUOS = {
+    "cardboard": {
+        "nombre": "Cartón",
+        "descripcion": "El cartón es un material compuesto principalmente de fibra de papel reciclado. Se utiliza en cajas, empaques y envases.",
+        "contenedor": "Contenedor azul o de papel y cartón.",
+        "razon": "Debe ir en este contenedor porque puede reciclarse para fabricar nuevos productos de papel."
+    },
+    "glass": {
+        "nombre": "Vidrio",
+        "descripcion": "El vidrio es un material inorgánico, duro y transparente utilizado en botellas, frascos y envases.",
+        "contenedor": "Contenedor verde.",
+        "razon": "El vidrio puede reciclarse indefinidamente sin perder calidad, por eso se separa del resto."
+    },
+    "metal": {
+        "nombre": "Metal",
+        "descripcion": "Incluye envases de aluminio, latas y otros objetos metálicos reciclables.",
+        "contenedor": "Contenedor amarillo.",
+        "razon": "El metal puede fundirse y reutilizarse, reduciendo el uso de materias primas."
+    },
+    "paper": {
+        "nombre": "Papel",
+        "descripcion": "El papel proviene de fibras vegetales procesadas y se usa en hojas, cuadernos y sobres.",
+        "contenedor": "Contenedor azul.",
+        "razon": "Es reciclable y se transforma en nuevos productos de papel, ayudando a conservar los bosques."
+    },
+    "plastic": {
+        "nombre": "Plástico",
+        "descripcion": "Material sintético derivado del petróleo, usado en botellas, envoltorios y envases.",
+        "contenedor": "Contenedor amarillo.",
+        "razon": "El plástico se recicla para fabricar nuevos productos, reduciendo la contaminación ambiental."
+    },
+    "trash": {
+        "nombre": "Desechos no reciclables",
+        "descripcion": "Son residuos que no pueden reciclarse, como servilletas sucias, pañales o colillas.",
+        "contenedor": "Contenedor gris o negro.",
+        "razon": "Estos residuos deben ir al vertedero o tratamiento especial, ya que no son reciclables."
+    }
+}
+
 # =========================
 # RUTA PRINCIPAL
 # =========================
@@ -134,9 +174,16 @@ def upload():
             result = 'error'
             confidence = 0.0
 
-    return render_template('index.html', 
-                           prediction=f"Predicción: {result} ({confidence:.2f}% confianza)", 
-                           img_path=filepath)
+    info = INFO_RESIDUOS.get(result, None)
+
+    return render_template(
+        'index.html',
+        prediction=f"Predicción: {result} ({confidence:.2f}% confianza)",
+        img_path=filepath,
+        info=info
+    )
+
+
 
 
 # =========================
