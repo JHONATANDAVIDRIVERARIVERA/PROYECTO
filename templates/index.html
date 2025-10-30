@@ -8,49 +8,86 @@
 
 /* 🔹 Fondo general */
 body {
-    background: linear-gradient(135deg, #74c69d, #95d5b2);
+    background-image: url('/static/fondo.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     margin: 0;
     font-family: 'Poppins', sans-serif;
 }
 
-/* 🔹 Contenedor general con dos columnas */
+/* 🔹 Contenedor principal */
+/* 🔹 Contenedor principal */
 .main-container {
     display: flex;
-    justify-content: center;
-    align-items: flex-start;
     flex-wrap: wrap;
-    gap: 40px;
+    justify-content: center;
+    align-items: flex-start; /* 🔸 Cambia de stretch a flex-start */
+    gap: 30px;
     padding: 50px 20px;
-    box-sizing: border-box;
     min-height: calc(100vh - 120px);
 }
 
-/* 🔹 Tarjeta general */
-.card {
+
+/* 🔹 Tarjeta de Clasificador */
+.classify-card {
     background: #ffffff;
     border-radius: 20px;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-    width: 420px;
+    width: 450px;
     max-width: 95%;
     padding: 45px 40px;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    min-height: 190px;
 }
 
-.card:hover {
+.classify-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
 }
 
-/* 🔹 Tarjeta informativa */
-.info-card {
-    background: rgba(255, 255, 255, 0.9);
+/* 🔹 Tarjeta de Tomar Foto (más pequeña de altura) */
+.camera-card {
+    background: #ffffff;
     border-radius: 20px;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-    width: 420px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    width: 450px;
     max-width: 95%;
-    padding: 35px 30px;
-    text-align: left;
-    line-height: 1.6;
+    padding: 35px 35px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    min-height: 140px; /* 🔹 Más pequeña que el clasificador */
+    height: auto; /* 🔹 Se ajusta si agregas más contenido */
+}
+
+.camera-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+}
+
+/* 🔹 Tarjeta de Información */
+.info-card {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    width: 520px;
+    max-width: 95%;
+    padding: 40px 35px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 350px;
+}
+
+.info-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
 }
 
 /* 🔹 Títulos */
@@ -60,7 +97,7 @@ h1, h2, h3 {
 }
 
 h1 {
-    font-size: 28px;
+    font-size: 24px;
     text-align: center;
     margin-bottom: 20px;
 }
@@ -69,6 +106,7 @@ h1 {
 p {
     font-size: 15px;
     color: #444;
+    line-height: 1.6;
 }
 
 /* 🔹 Input y botones */
@@ -114,7 +152,7 @@ img {
 }
 
 /* 🔹 Responsive */
-@media (max-width: 900px) {
+@media (max-width: 1200px) {
     .main-container {
         flex-direction: column;
         align-items: center;
@@ -123,125 +161,115 @@ img {
 </style>
 
 <div class="main-container">
+    <!-- 🔸 Clasificador de Residuos -->
+    <div class="classify-card">
+        <h1>Clasificador de Residuos</h1>
+        <form id="uploadForm" action="/predict" method="post" enctype="multipart/form-data">
+            <input type="file" id="fileInput" name="file" accept="image/*" required>
+            <button type="submit" style="margin-top:15px;">Clasificar imagen</button>
+        </form>
 
-    <!-- 🔸 TARJETA 1: CLASIFICADOR -->
-    <div style="display:flex; flex-direction:column; gap:40px;">
-        <div class="card">
-            <h1>Clasificador de Residuos</h1>
+        {% if img_path %}
+        <img src="{{ img_path }}" alt="Imagen subida">
+        {% endif %}
 
-            <form id="uploadForm" action="/predict" method="post" enctype="multipart/form-data">
-                <input type="file" id="fileInput" name="file" accept="image/*" required>
-                <button type="submit" style="margin-top:15px;">Clasificar imagen</button>
-            </form>
+        {% if prediction %}
+        <h2>{{ prediction }}</h2>
 
-            {% if img_path %}
-            <img src="{{ img_path }}" alt="Imagen subida">
-            {% endif %}
-
-            {% if prediction %}
-            <h2>{{ prediction }}</h2>
-
-            {% if info %}
-            <div style="margin-top:25px; background:#f8f9fa; border-radius:12px; padding:15px; box-shadow:0 3px 8px rgba(0,0,0,0.1);">
-                <h3>🧾 Información sobre {{ info.nombre }}</h3>
-                <p><strong>Descripción:</strong> {{ info.descripcion }}</p>
-                <p><strong>Contenedor adecuado:</strong> {{ info.contenedor }}</p>
-                <p><strong>¿Por qué?</strong> {{ info.razon }}</p>
-            </div>
-            {% endif %}
-            {% endif %}
+        {% if info %}
+        <div style="margin-top:25px; background:#f8f9fa; border-radius:12px; padding:15px; box-shadow:0 3px 8px rgba(0,0,0,0.1);">
+            <h3>🧾 Información sobre {{ info.nombre }}</h3>
+            <p><strong>Descripción:</strong> {{ info.descripcion }}</p>
+            <p><strong>Contenedor adecuado:</strong> {{ info.contenedor }}</p>
+            <p><strong>¿Por qué?</strong> {{ info.razon }}</p>
         </div>
-
-        <!-- 🔸 TARJETA 2: CÁMARA -->
-        <div class="card">
-            <h1>Tomar Foto</h1>
-
-            <div>
-                <button type="button" id="startCamera">Activar cámara</button>
-                <button type="button" id="takePhoto" style="display:none;">Tomar foto</button>
-                <video id="camera" autoplay playsinline style="display:none; width:100%; border-radius:12px; margin-top:15px;"></video>
-                <canvas id="canvas" style="display:none;"></canvas>
-            </div>
-
-            <form id="photoForm" action="/predict" method="post" enctype="multipart/form-data">
-                <input type="file" id="photoInput" name="file" style="display:none;">
-                <button type="submit" id="photoSubmit" style="display:none;">Enviar foto</button>
-            </form>
-        </div>
+        {% endif %}
+        {% endif %}
     </div>
 
-    <!-- 🔸 TARJETA 3: EXPLICACIÓN -->
+    <!-- 🔸 Tomar Foto -->
+    <div class="camera-card">
+        <h1>Tomar Foto</h1>
+        <div>
+            <button type="button" id="startCamera">Activar cámara</button>
+            <button type="button" id="takePhoto" style="display:none;">Tomar foto</button>
+            <video id="camera" autoplay playsinline style="display:none; width:100%; border-radius:12px; margin-top:15px;"></video>
+            <canvas id="canvas" style="display:none;"></canvas>
+        </div>
+
+        <form id="photoForm" action="/predict" method="post" enctype="multipart/form-data">
+            <input type="file" id="photoInput" name="file" style="display:none;">
+            <button type="submit" id="photoSubmit" style="display:none;">Enviar foto</button>
+        </form>
+    </div>
+
+    <!-- 🔸 Información del clasificador -->
     <div class="info-card">
         <h2>♻️ ¿Qué hace este clasificador?</h2>
         <p>
-            Este sistema utiliza <strong>Inteligencia Artificial</strong> y un modelo de <strong>Machine Learning</strong> 
+            Este sistema utiliza Inteligencia Artificial y un modelo de Machine Learning 
             entrenado con miles de imágenes de residuos comunes para reconocer de qué material está hecho un objeto.
         </p>
         <p>
             Al subir o tomar una foto, el modelo analiza sus características visuales y predice si pertenece a una de las siguientes categorías:
         </p>
         <ul style="margin-left:20px;">
-            <li>🟫 Cartón</li>
-            <li>🟦 Papel</li>
-            <li>🟩 Vidrio</li>
-            <li>🟨 Plástico</li>
-            <li>⚙️ Metal</li>
-            <li>🗑️ Desechos no reciclables</li>
+            <li>Cartón</li>
+            <li>Papel</li>
+            <li>Vidrio</li>
+            <li>Plástico</li>
+            <li>Metal</li>
         </ul>
         <p>
-            El propósito del clasificador es fomentar la <strong>educación ambiental</strong> 
+            El propósito del clasificador es fomentar la educación ambiental 
             y ayudar a las personas a depositar cada residuo en el contenedor correcto, 
-            promoviendo una cultura de <strong>reciclaje responsable</strong> y reducción de contaminación.
+            promoviendo una cultura de reciclaje responsable y reducción de contaminación.
         </p>
         <p style="color:#2d6a4f; font-weight:600;">
-            🌱 ¡Cada pequeña acción cuenta para cuidar el planeta!
+            ¡Cada pequeña acción cuenta para cuidar el planeta!
         </p>
     </div>
-
 </div>
-
-<!-- 🎥 Script de cámara -->
 <script>
-const startBtn = document.getElementById('startCamera');
-const takePhotoBtn = document.getElementById('takePhoto');
-const video = document.getElementById('camera');
-const canvas = document.getElementById('canvas');
-const photoInput = document.getElementById('photoInput');
-const photoSubmit = document.getElementById('photoSubmit');
-let stream;
+document.addEventListener("DOMContentLoaded", () => {
+    const startCameraBtn = document.getElementById("startCamera");
+    const takePhotoBtn = document.getElementById("takePhoto");
+    const video = document.getElementById("camera");
+    const canvas = document.getElementById("canvas");
+    const photoInput = document.getElementById("photoInput");
+    const photoSubmit = document.getElementById("photoSubmit");
+    const photoForm = document.getElementById("photoForm");
+    let stream = null;
 
-// Activar cámara
-startBtn.addEventListener('click', async () => {
-    try {
-        stream = await navigator.mediaDevices.getUserMedia({ video: true });
-        video.srcObject = stream;
-        video.style.display = 'block';
-        takePhotoBtn.style.display = 'inline-block';
-        startBtn.style.display = 'none';
-    } catch (err) {
-        alert("Error al acceder a la cámara: " + err.message);
-    }
-});
-
-// Tomar foto
-takePhotoBtn.addEventListener('click', () => {
-    const context = canvas.getContext('2d');
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    context.drawImage(video, 0, 0);
-
-    canvas.toBlob(blob => {
-        const file = new File([blob], "captura.jpg", { type: "image/jpeg" });
-        const dataTransfer = new DataTransfer();
-        dataTransfer.items.add(file);
-        photoInput.files = dataTransfer.files;
-        photoSubmit.click();
+    // 🔹 Activar cámara
+    startCameraBtn.addEventListener("click", async () => {
+        try {
+            stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            video.srcObject = stream;
+            video.style.display = "block";
+            takePhotoBtn.style.display = "block";
+            startCameraBtn.style.display = "none";
+        } catch (err) {
+            alert("No se pudo acceder a la cámara: " + err.message);
+            console.error(err);
+        }
     });
 
-    stream.getTracks().forEach(track => track.stop());
-    video.style.display = 'none';
-    takePhotoBtn.style.display = 'none';
-    startBtn.style.display = 'inline-block';
+    // 🔹 Tomar foto
+    takePhotoBtn.addEventListener("click", () => {
+        const context = canvas.getContext("2d");
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        canvas.toBlob(blob => {
+            const file = new File([blob], "photo.jpg", { type: "image/jpeg" });
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+            photoInput.files = dataTransfer.files;
+            photoSubmit.click(); // 🔹 Enviar automáticamente la foto al servidor
+        }, "image/jpeg");
+    });
 });
 </script>
 
