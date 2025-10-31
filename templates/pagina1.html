@@ -7,13 +7,15 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
 
-    body {
-      margin: 0;
-      font-family: 'Poppins', sans-serif;
-      background-color: #95d5b2; /* Verde reciclaje */
-      color: #333;
-    }
-
+ /* 🔹 Fondo general */
+body {
+    background-image: url('/static/fondopagina11.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+}
     /* Barra superior */
     header {
       background-color: #2d6a4f;
@@ -148,6 +150,8 @@
     <button onclick="window.location.href='{{ url_for('index') }}'">Menú</button>
     <span>Fase 1: Entendimiento del Negocio</span>
     <button onclick="window.location.href='{{ url_for('pagina2') }}'">Fase 2</button>
+    <button onclick="window.location.href='{{ url_for('pagina3') }}'">Fase 3</button>
+
   </header>
 
   <main>

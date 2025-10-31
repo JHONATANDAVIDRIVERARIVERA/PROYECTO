@@ -144,6 +144,7 @@
                         <a href="{{ url_for('index') }}">Inicio</a>
                         <a href="{{ url_for('pagina1') }}">Fase del negocio</a>
                         <a href="{{ url_for('pagina2') }}">Fase de los datos e ingenieria de datos</a>
+                        <a href="{{ url_for('pagina3') }}">Pagina 3</a>
                         {% if session.get('user') == 'admin' %}
                             <a href="{{ url_for('users') }}">Administrar usuarios</a>
                         {% endif %}
