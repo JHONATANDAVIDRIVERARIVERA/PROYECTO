@@ -357,6 +357,11 @@ def pagina1():
 def pagina2():
     return render_template('pagina2.html', user=session.get('user'))
 
+@app.route('/pagina3')
+@login_required
+def pagina3():
+    return render_template('pagina3.html', user=session.get('user'))
+
 # =========================
 # EJECUTAR SERVIDOR
 # =========================

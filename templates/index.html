@@ -142,7 +142,7 @@ input[type="file"], button {
 }
 
 .bin {
-    background: #f8f9fa;
+    background: #ffffff;
     border-radius: 15px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     width: 200px;
@@ -160,7 +160,7 @@ input[type="file"], button {
 /* 🔹 Efecto de selección */
 .bin.selected {
     transform: scale(1.1);
-    border: 3px solid #2d6a4f;
+    border: 3px solid #1d8109;
 }
 
 .bin img {
@@ -177,8 +177,8 @@ input[type="file"], button {
 
 /* 🔹 Cuadro de información de la caneca */
 .bin-info-card {
-    background: #f1f8f5;
-    border-left: 6px solid #2d6a4f;
+    background: #ffffff;
+    border-left: 6px solid #000000;
     border-radius: 15px;
     margin-top: 30px;
     padding: 25px;
@@ -401,7 +401,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // 🔹 Información completa de las canecas
     const binsData = {
         verde: {
-            titulo: "Caneca Verde ♻️",
+            titulo: "Caneca Verde",
             descripcion: "Se usa para los residuos orgánicos biodegradables. Estos materiales se descomponen de forma natural y pueden convertirse en abono (composta).",
             items: [
                 "Restos de comida (frutas, verduras, pan, cáscaras)",
@@ -411,7 +411,7 @@ document.addEventListener("DOMContentLoaded", () => {
             ]
         },
         amarillo: {
-            titulo: "Caneca Amarilla 🟡",
+            titulo: "Caneca Amarilla",
             descripcion: "Está destinada a los residuos aprovechables como plásticos, metales y algunos envases. Estos pueden ser reciclados y reutilizados.",
             items: [
                 "Botellas y envases plásticos (PET, HDPE, etc.)",
@@ -421,7 +421,7 @@ document.addEventListener("DOMContentLoaded", () => {
             ]
         },
         azul: {
-            titulo: "Caneca Azul 🔵",
+            titulo: "Caneca Azul",
             descripcion: "Se utiliza para los residuos aprovechables de papel y cartón. Estos materiales deben estar limpios y secos para su reciclaje.",
             items: [
                 "Hojas de papel, cuadernos y revistas",
@@ -431,7 +431,7 @@ document.addEventListener("DOMContentLoaded", () => {
             ]
         },
         rojo: {
-            titulo: "Caneca Roja 🔴",
+            titulo: "Caneca Roja",
             descripcion: "Está destinada a los residuos no reciclables o peligrosos. Estos deben manejarse con cuidado ya que pueden ser contaminantes.",
             items: [
                 "Papel higiénico, servilletas y pañuelos usados",
