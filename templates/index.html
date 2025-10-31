@@ -17,17 +17,15 @@ body {
 }
 
 /* 🔹 Contenedor principal */
-/* 🔹 Contenedor principal */
 .main-container {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    align-items: flex-start; /* 🔸 Cambia de stretch a flex-start */
+    align-items: flex-start;
     gap: 30px;
     padding: 50px 20px;
     min-height: calc(100vh - 120px);
 }
-
 
 /* 🔹 Tarjeta de Clasificador */
 .classify-card {
@@ -49,7 +47,7 @@ body {
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
 }
 
-/* 🔹 Tarjeta de Tomar Foto (más pequeña de altura) */
+/* 🔹 Tarjeta de Tomar Foto */
 .camera-card {
     background: #ffffff;
     border-radius: 20px;
@@ -61,8 +59,8 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    min-height: 140px; /* 🔹 Más pequeña que el clasificador */
-    height: auto; /* 🔹 Se ajusta si agregas más contenido */
+    min-height: 140px;
+    height: auto;
 }
 
 .camera-card:hover {
@@ -115,6 +113,105 @@ input[type="file"], button {
     border-radius: 8px;
     font-size: 15px;
     padding: 12px;
+}
+
+/* 🔹 Sección de canecas */
+.bins-container {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    padding: 40px;
+    width: 95%;
+    max-width: 1100px;
+    margin: 40px auto 0;
+    text-align: center;
+}
+
+.bins-container h1 {
+    color: #2d6a4f;
+    margin-bottom: 30px;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.bins-grid {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 30px;
+}
+
+.bin {
+    background: #f8f9fa;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    width: 200px;
+    padding: 15px;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease;
+    border: 3px solid transparent;
+}
+
+.bin:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+/* 🔹 Efecto de selección */
+.bin.selected {
+    transform: scale(1.1);
+    border: 3px solid #2d6a4f;
+}
+
+.bin img {
+    width: 100%;
+    border-radius: 12px;
+}
+
+.bin p {
+    margin-top: 10px;
+    color: #2d6a4f;
+    font-weight: 600;
+    font-size: 16px;
+}
+
+/* 🔹 Cuadro de información de la caneca */
+.bin-info-card {
+    background: #f1f8f5;
+    border-left: 6px solid #2d6a4f;
+    border-radius: 15px;
+    margin-top: 30px;
+    padding: 25px;
+    text-align: left;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.bin-info-card.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.bin-info-card h2 {
+    color: #1b4332;
+    margin-bottom: 10px;
+}
+
+.bin-info-card h3 {
+    color: #2d6a4f;
+    margin-top: 20px;
+}
+
+.bin-info-card ul {
+    margin-top: 10px;
+    padding-left: 20px;
+}
+
+.bin-info-card li {
+    color: #333;
+    margin-bottom: 5px;
 }
 
 input[type="file"] {
@@ -230,6 +327,38 @@ img {
         </p>
     </div>
 </div>
+
+<!-- 🔸 Cuadro con las canecas -->
+<div class="bins-container">
+    <h1>Conoce las Canecas de Reciclaje</h1>
+    <div class="bins-grid">
+        <div class="bin" data-info="verde">
+            <img src="/static/verde.png" alt="Caneca Verde">
+            <p>Verde</p>
+        </div>
+        <div class="bin" data-info="amarillo">
+            <img src="/static/amarillo.png" alt="Caneca Amarilla">
+            <p>Amarillo</p>
+        </div>
+        <div class="bin" data-info="azul">
+            <img src="/static/azul.png" alt="Caneca Azul">
+            <p>Azul</p>
+        </div>
+        <div class="bin" data-info="rojo">
+            <img src="/static/rojo.png" alt="Caneca Roja">
+            <p>Rojo</p>
+        </div>
+    </div>
+
+    <!-- 🔹 Cuadro de información -->
+    <div id="bin-info" class="bin-info-card" style="display:none;">
+        <h2 id="bin-title"></h2>
+        <p id="bin-description"></p>
+        <h3>Ejemplos de residuos:</h3>
+        <ul id="bin-items"></ul>
+    </div>
+</div>
+
 <script>
 document.addEventListener("DOMContentLoaded", () => {
     const startCameraBtn = document.getElementById("startCamera");
@@ -238,7 +367,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const canvas = document.getElementById("canvas");
     const photoInput = document.getElementById("photoInput");
     const photoSubmit = document.getElementById("photoSubmit");
-    const photoForm = document.getElementById("photoForm");
     let stream = null;
 
     // 🔹 Activar cámara
@@ -251,24 +379,96 @@ document.addEventListener("DOMContentLoaded", () => {
             startCameraBtn.style.display = "none";
         } catch (err) {
             alert("No se pudo acceder a la cámara: " + err.message);
-            console.error(err);
         }
     });
 
     // 🔹 Tomar foto
     takePhotoBtn.addEventListener("click", () => {
-        const context = canvas.getContext("2d");
+        const ctx = canvas.getContext("2d");
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
-        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
         canvas.toBlob(blob => {
             const file = new File([blob], "photo.jpg", { type: "image/jpeg" });
-            const dataTransfer = new DataTransfer();
-            dataTransfer.items.add(file);
-            photoInput.files = dataTransfer.files;
-            photoSubmit.click(); // 🔹 Enviar automáticamente la foto al servidor
+            const dt = new DataTransfer();
+            dt.items.add(file);
+            photoInput.files = dt.files;
+            photoSubmit.click();
         }, "image/jpeg");
+    });
+
+    // 🔹 Información completa de las canecas
+    const binsData = {
+        verde: {
+            titulo: "Caneca Verde ♻️",
+            descripcion: "Se usa para los residuos orgánicos biodegradables. Estos materiales se descomponen de forma natural y pueden convertirse en abono (composta).",
+            items: [
+                "Restos de comida (frutas, verduras, pan, cáscaras)",
+                "Hojas secas, ramas y residuos de poda",
+                "Café usado y bolsitas de té",
+                "Cáscaras de huevo y restos vegetales"
+            ]
+        },
+        amarillo: {
+            titulo: "Caneca Amarilla 🟡",
+            descripcion: "Está destinada a los residuos aprovechables como plásticos, metales y algunos envases. Estos pueden ser reciclados y reutilizados.",
+            items: [
+                "Botellas y envases plásticos (PET, HDPE, etc.)",
+                "Tapas y bolsas plásticas limpias",
+                "Latas de bebidas, envases de aluminio o acero",
+                "Envases metálicos de alimentos (como atún o conservas)"
+            ]
+        },
+        azul: {
+            titulo: "Caneca Azul 🔵",
+            descripcion: "Se utiliza para los residuos aprovechables de papel y cartón. Estos materiales deben estar limpios y secos para su reciclaje.",
+            items: [
+                "Hojas de papel, cuadernos y revistas",
+                "Cajas de cartón plegadas",
+                "Periódicos y folletos",
+                "Empaques de papel sin grasa ni residuos"
+            ]
+        },
+        rojo: {
+            titulo: "Caneca Roja 🔴",
+            descripcion: "Está destinada a los residuos no reciclables o peligrosos. Estos deben manejarse con cuidado ya que pueden ser contaminantes.",
+            items: [
+                "Papel higiénico, servilletas y pañuelos usados",
+                "Residuos sanitarios (pañales, toallas higiénicas, tapabocas)",
+                "Colillas de cigarrillo",
+                "Pilas, baterías, bombillos o medicamentos vencidos"
+            ]
+        }
+    };
+
+    // 🔹 Mostrar información al hacer clic con animación
+    document.querySelectorAll(".bin").forEach(bin => {
+        bin.addEventListener("click", () => {
+            // Efecto visual de selección
+            document.querySelectorAll(".bin").forEach(b => b.classList.remove("selected"));
+            bin.classList.add("selected");
+
+            const tipo = bin.dataset.info;
+            const info = binsData[tipo];
+            const infoCard = document.getElementById("bin-info");
+            const title = document.getElementById("bin-title");
+            const desc = document.getElementById("bin-description");
+            const list = document.getElementById("bin-items");
+
+            title.textContent = info.titulo;
+            desc.textContent = info.descripcion;
+            list.innerHTML = "";
+            info.items.forEach(item => {
+                const li = document.createElement("li");
+                li.textContent = item;
+                list.appendChild(li);
+            });
+
+            infoCard.style.display = "block";
+            infoCard.classList.remove("show");
+            setTimeout(() => infoCard.classList.add("show"), 10);
+        });
     });
 });
 </script>
