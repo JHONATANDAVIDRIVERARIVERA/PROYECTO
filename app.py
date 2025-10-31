@@ -4,6 +4,7 @@ import os
 import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
 from pathlib import Path
+from datetime import timedelta
 
 # Variables globales para TensorFlow/modelo
 load_model = None
@@ -38,6 +39,8 @@ UPLOAD_FOLDER = 'static/uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # Secret key para sesiones (en producción usa una variable de entorno segura)
 app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'dev-secret-key')
+# Hacer que las sesiones sean permanentes por defecto y duren 30 días
+app.permanent_session_lifetime = timedelta(days=30)
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # =========================
@@ -151,6 +154,15 @@ def upload():
     filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
     file.save(filepath)
 
+    # Intentar cargar el modelo en tiempo de ejecución si aún no está cargado
+    global model
+    if (model is None or image is None or np is None) and load_model is not None:
+        try:
+            model = load_model(MODEL_PATH)
+            print(f"[INFO] Modelo cargado dinámicamente desde {MODEL_PATH}")
+        except Exception as e:
+            print("[WARN] No se pudo cargar el modelo dinámicamente:", e)
+
     # Si no tenemos TensorFlow o el modelo, usamos predicción simulada
     if model is None or image is None or np is None:
         # Predicción simulada (útil para probar la UI sin TensorFlow)
@@ -227,6 +239,8 @@ def login():
 
         if row and check_password_hash(row['password'], password):
             session['user'] = username
+            # Mantener la sesión incluso si el usuario cierra el navegador
+            session.permanent = True
             flash('Has iniciado sesión correctamente.', 'success')
             return redirect(url_for('index'))
         else:
@@ -343,6 +357,32 @@ def delete_user(user_id):
         conn.close()
 
     return redirect(url_for('users'))
+
+
+def reload_model_from_disk():
+    """Intenta recargar el modelo desde disco y actualiza la variable global `model`.
+    Devuelve (ok: bool, message: str).
+    """
+    global model
+    if load_model is None:
+        return False, 'TensorFlow no está disponible en este entorno.'
+    try:
+        new_model = load_model(MODEL_PATH)
+        model = new_model
+        return True, f'Modelo recargado desde {MODEL_PATH}'
+    except Exception as e:
+        return False, f'Error recargando el modelo: {e}'
+
+
+@app.route('/reload_model', methods=['POST'])
+@admin_required
+def reload_model():
+    ok, msg = reload_model_from_disk()
+    if ok:
+        flash(msg, 'success')
+    else:
+        flash(msg, 'error')
+    return redirect(url_for('index'))
 
 # =========================
 # RUTAS DE LAS PÁGINAS DEL MENÚ
