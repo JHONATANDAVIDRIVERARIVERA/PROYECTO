@@ -88,6 +88,22 @@ MODEL_PATH = 'garbage_model.h5'
 # Debes usar las mismas clases detectadas en el entrenamiento
 CLASS_NAMES = ['cardboard', 'glass', 'metal', 'paper', 'plastic', 'trash']
 
+# Si existe class_indices.json (guardado por train.py), cargar el orden real de clases
+try:
+    import json
+    if os.path.exists('class_indices.json'):
+        with open('class_indices.json','r',encoding='utf-8') as fh:
+            ci = json.load(fh)
+        # invertir mapping {class: index} -> list ordered by index
+        max_index = max(ci.values())
+        labels = [None] * (max_index + 1)
+        for cls, idx in ci.items():
+            labels[idx] = cls
+        CLASS_NAMES = labels
+        print('[INFO] Cargado class_indices.json, clases ordenadas:', CLASS_NAMES)
+except Exception as e:
+    print('[WARN] No se pudo cargar class_indices.json:', e)
+
 # Diccionario con información de cada tipo de residuo
 INFO_RESIDUOS = {
     "cardboard": {
@@ -156,12 +172,12 @@ def upload():
 
     # Intentar cargar el modelo en tiempo de ejecución si aún no está cargado
     global model
-    if (model is None or image is None or np is None) and load_model is not None:
-        try:
-            model = load_model(MODEL_PATH)
-            print(f"[INFO] Modelo cargado dinámicamente desde {MODEL_PATH}")
-        except Exception as e:
-            print("[WARN] No se pudo cargar el modelo dinámicamente:", e)
+    if model is None or load_model is None or image is None or np is None:
+        ok, msg = reload_model_from_disk()
+        if ok:
+            print(f"[INFO] {msg}")
+        else:
+            print(f"[WARN] {msg}")
 
     # Si no tenemos TensorFlow o el modelo, usamos predicción simulada
     if model is None or image is None or np is None:
@@ -363,9 +379,20 @@ def reload_model_from_disk():
     """Intenta recargar el modelo desde disco y actualiza la variable global `model`.
     Devuelve (ok: bool, message: str).
     """
-    global model
-    if load_model is None:
-        return False, 'TensorFlow no está disponible en este entorno.'
+    global model, load_model, image, np
+    # Si las funciones de TF no están disponibles en este proceso, intentar importarlas dinámicamente
+    if load_model is None or image is None or np is None:
+        try:
+            import numpy as _np
+            from tensorflow.keras.models import load_model as _tf_load_model
+            from tensorflow.keras.preprocessing import image as _tf_image
+            # asignar a variables globales
+            np = _np
+            load_model = _tf_load_model
+            image = _tf_image
+        except Exception as e:
+            return False, f'TensorFlow/NumPy no disponible o error al importarlos: {e}'
+
     try:
         new_model = load_model(MODEL_PATH)
         model = new_model

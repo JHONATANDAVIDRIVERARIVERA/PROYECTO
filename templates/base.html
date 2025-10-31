@@ -147,6 +147,9 @@
                         <a href="{{ url_for('pagina3') }}">Pagina 3</a>
                         {% if session.get('user') == 'admin' %}
                             <a href="{{ url_for('users') }}">Administrar usuarios</a>
+                            <form action="{{ url_for('reload_model') }}" method="post" style="margin:0;">
+                                <button type="submit" style="width:100%;padding:10px 14px;border:none;background:#2d6a4f;color:white;cursor:pointer;text-align:left;">Recargar modelo</button>
+                            </form>
                         {% endif %}
                     </div>
                 </div>
