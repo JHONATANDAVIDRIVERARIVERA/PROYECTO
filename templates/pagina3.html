@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PAGINA 3</title>
+  <title>Fase 3</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
 
  /* 🔹 Fondo general */
 body {
     background-image: url('/static/fondopagina2.jpg');
-    background-size: cover;
+    background-size: auto;
     background-position: center;
-    background-repeat: no-repeat;
+    background-repeat: repeat;
     margin: 0;
     font-family: 'Poppins', sans-serif;
 }
@@ -147,7 +147,7 @@ body {
 <body>
   <header>
     <button onclick="window.location.href='{{ url_for('index') }}'">Menú</button>
-    <span>PAGINA 3</span>
+    <span>Fase 3</span>
     <button onclick="window.location.href='{{ url_for('pagina1') }}'">Fase 1</button>
     <button onclick="window.location.href='{{ url_for('pagina2') }}'">Fase 2</button>
   </header>
