@@ -384,6 +384,44 @@ def reload_model():
         flash(msg, 'error')
     return redirect(url_for('index'))
 
+
+# Ruta para recolectar ejemplos etiquetados y guardarlos en dataset/<clase>
+@app.route('/collect', methods=['GET', 'POST'])
+@admin_required
+def collect():
+    """Formulario simple (solo admin) para subir imágenes etiquetadas
+    y guardarlas en la carpeta correspondiente dentro de `dataset/`.
+    """
+    if request.method == 'POST':
+        clase = request.form.get('clase')
+        file = request.files.get('file')
+        if not clase or not file:
+            flash('Selecciona una clase y un archivo.', 'error')
+            return redirect(url_for('collect'))
+
+        # Asegurar que la carpeta de la clase existe
+        dataset_dir = os.path.join(os.path.dirname(__file__), 'dataset')
+        target_dir = os.path.join(dataset_dir, clase)
+        os.makedirs(target_dir, exist_ok=True)
+
+        # Guardar con nombre único
+        filename = file.filename
+        base, ext = os.path.splitext(filename)
+        i = 1
+        dest_name = filename
+        while os.path.exists(os.path.join(target_dir, dest_name)):
+            dest_name = f"{base}_{i}{ext}"
+            i += 1
+
+        dest_path = os.path.join(target_dir, dest_name)
+        file.save(dest_path)
+        flash(f'Imagen guardada en dataset/{clase}/{dest_name}', 'success')
+        return redirect(url_for('collect'))
+
+    # GET: mostrar formulario
+    clases = CLASS_NAMES
+    return render_template('collect.html', clases=clases, user=session.get('user'))
+
 # =========================
 # RUTAS DE LAS PÁGINAS DEL MENÚ
 # =========================

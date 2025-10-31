@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}Recolectar ejemplos - Clasificador{% endblock %}
+
+{% block content %}
+<h2>Recolectar imagen etiquetada (solo admin)</h2>
+<form method="post" enctype="multipart/form-data">
+  <label for="clase">Clase:</label>
+  <select name="clase" id="clase">
+    {% for c in clases %}
+      <option value="{{ c }}">{{ c }}</option>
+    {% endfor %}
+  </select>
+  <br><br>
+  <label for="file">Imagen:</label>
+  <input type="file" name="file" id="file" accept="image/*" required>
+  <br><br>
+  <button type="submit">Subir y guardar</button>
+</form>
+{% endblock %}
