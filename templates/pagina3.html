@@ -3,21 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Fase 3</title>
+  <title>Fase 3 - Ingeniería y Evaluación del Modelo</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
 
- /* 🔹 Fondo general */
-body {
-    background-image: url('/static/fondopagina2.jpg');
-    background-size: auto;
-    background-position: center;
-    background-repeat: repeat;
-    margin: 0;
-    font-family: 'Poppins', sans-serif;
-}
+    body {
+      background-image: url('/static/fondopagina2.jpg');
+      background-size: auto;
+      background-position: center;
+      background-repeat: repeat;
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+    }
 
-    /* Barra superior */
     header {
       background-color: #2d6a4f;
       color: white;
@@ -126,11 +124,10 @@ body {
       text-align: justify;
     }
 
-    footer {
-      text-align: center;
-      margin-top: 40px;
-      color: #555;
-      font-size: 14px;
+    ul {
+      line-height: 1.7;
+      text-align: justify;
+      margin-left: 10px;
     }
 
     @media (max-width: 900px) {
@@ -151,3 +148,62 @@ body {
     <button onclick="window.location.href='{{ url_for('pagina1') }}'">Fase 1</button>
     <button onclick="window.location.href='{{ url_for('pagina2') }}'">Fase 2</button>
   </header>
+
+  <main>
+    <div class="content">
+      <h2>Ingeniería del Modelo</h2>
+      <p>
+        En esta fase del proyecto <strong>Clasificador de Residuos con Inteligencia Artificial</strong>,
+        se desarrolló la estructura del modelo de aprendizaje profundo encargado de reconocer materiales reciclables.
+        Para este propósito se utilizó la arquitectura <strong>DenseNet-121</strong> entrenada con miles de imágenes 
+        de residuos pertenecientes a seis clases: cartón, vidrio, metal, papel, plástico y desechos generales.
+      </p>
+
+      <ul style="list-style: none; padding: 0; margin-top: 20px;">
+        <li><strong>Selección de Algoritmos:</strong> Se eligió DenseNet-121 por su alta precisión en clasificación de imágenes 
+        y su eficiencia en el manejo de texturas y patrones visuales complejos presentes en los residuos.</li>
+        <li><strong>Entrenamiento:</strong> Los datos fueron procesados y normalizados a 128x128 píxeles, aplicando técnicas de aumento de datos
+        para mejorar la generalización del modelo y evitar sobreajuste.</li>
+        <li><strong>Ajuste de Hiperparámetros:</strong> Se optimizó la tasa de aprendizaje, número de épocas y tamaño de lote
+        para lograr un equilibrio entre exactitud y velocidad de entrenamiento.</li>
+        <li><strong>Validación:</strong> El modelo fue validado con un conjunto independiente de imágenes no vistas
+        para verificar su rendimiento real antes de la implementación en Flask.</li>
+      </ul>
+
+      <h2>Evaluación del Modelo</h2>
+      <p>
+        Una vez entrenado el clasificador, se evaluó su desempeño mediante métricas clave que permitieron medir 
+        su efectividad en la identificación de materiales reciclables. 
+        Esta fase asegura que el modelo cumpla con los estándares de precisión requeridos antes de integrarse al sistema web Flask.
+      </p>
+
+      <ul style="list-style: none; padding: 0; margin-top: 20px;">
+        <li><strong>Métricas de Desempeño:</strong> Se emplearon métricas como <em>accuracy</em>, <em>precision</em>, <em>recall</em> y <em>F1-score</em>
+        para cuantificar la exactitud de las predicciones.</li>
+        <li><strong>Validación Cruzada:</strong> Se aplicaron pruebas con distintos subconjuntos de datos para comprobar la capacidad de generalización del modelo.</li>
+        <li><strong>Análisis de Riesgos:</strong> Se identificaron posibles errores de clasificación entre materiales visualmente similares
+        (por ejemplo, plástico transparente y vidrio) y se propuso la recolección de más muestras.</li>
+        <li><strong>Revisión con Expertos:</strong> Los resultados fueron contrastados con especialistas en sostenibilidad y gestión de residuos
+        para garantizar la aplicabilidad del sistema en contextos reales.</li>
+      </ul>
+
+      <p style="margin-top:25px;">
+        Finalmente, el modelo fue exportado en formato .h5 e integrado en la aplicación Flask, 
+        donde permite al usuario subir o capturar una imagen en tiempo real y recibir la predicción correspondiente. 
+        Esto demuestra la aplicabilidad del aprendizaje profundo como herramienta para el fomento del reciclaje 
+        y la sostenibilidad ambiental.
+      </p>
+    </div>
+
+    <div class="sidebar">
+      <h3>Fases del Proyecto</h3>
+      <ul>
+        <li><a href="{{ url_for('pagina1') }}">Fase 1: Entendimiento</a></li>
+        <li><a href="{{ url_for('pagina2') }}">Fase 2: Preparación de Datos</a></li>
+        <li><a href="#">Fase 3: Ingeniería y Evaluación</a></li>
+      </ul>
+    </div>
+  </main>
+</body>
+</html>
+

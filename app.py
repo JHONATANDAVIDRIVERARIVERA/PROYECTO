@@ -103,18 +103,29 @@ CLASS_NAMES = ['cardboard', 'glass', 'metal', 'paper', 'plastic', 'trash']
 # Si existe class_indices.json (guardado por train.py), cargar el orden real de clases
 try:
     import json
-    if os.path.exists('class_indices.json'):
-        with open('class_indices.json','r',encoding='utf-8') as fh:
-            ci = json.load(fh)
-        # invertir mapping {class: index} -> list ordered by index
-        max_index = max(ci.values())
-        labels = [None] * (max_index + 1)
-        for cls, idx in ci.items():
-            labels[idx] = cls
-        CLASS_NAMES = labels
-        print('[INFO] Cargado class_indices.json, clases ordenadas:', CLASS_NAMES)
+    # Usar ruta absoluta relativa al archivo para evitar problemas de working dir en PaaS
+    CI_PATH = Path(__file__).parent / 'class_indices.json'
+    if CI_PATH.exists():
+        try:
+            with open(CI_PATH, 'r', encoding='utf-8') as fh:
+                ci = json.load(fh)
+            # invertir mapping {class: index} -> list ordered by index
+            max_index = max(ci.values())
+            labels = [None] * (max_index + 1)
+            for cls, idx in ci.items():
+                labels[idx] = cls
+            CLASS_NAMES = labels
+            print('[INFO] Cargado class_indices.json desde', CI_PATH, 'clases ordenadas:', CLASS_NAMES)
+            logging.info('Cargado class_indices.json desde %s', CI_PATH)
+        except Exception as e:
+            print('[WARN] Error leyendo/parsing class_indices.json:', e)
+            logging.warning('Error leyendo/parsing %s: %s', CI_PATH, e)
+    else:
+        print('[INFO] No se encontró class_indices.json en', CI_PATH)
+        logging.info('No se encontró class_indices.json en %s', CI_PATH)
 except Exception as e:
-    print('[WARN] No se pudo cargar class_indices.json:', e)
+    print('[WARN] No se pudo intentar cargar class_indices.json:', e)
+    logging.warning('No se pudo intentar cargar class_indices.json: %s', e)
 
 # Diccionario con información de cada tipo de residuo
 INFO_RESIDUOS = {
