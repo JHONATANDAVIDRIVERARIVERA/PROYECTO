@@ -47,6 +47,7 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s [PID:%(process)d] %(levelname)s: %(message)s'
 )
+logging.info('Aplicación (app.py) cargada — logging inicializado')
 # Secret key para sesiones (en producción usa una variable de entorno segura)
 app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'dev-secret-key')
 # Hacer que las sesiones sean permanentes por defecto y duren 30 días
@@ -189,14 +190,15 @@ def upload():
         else:
             print(f"[WARN] {msg}")
 
-    # Si no tenemos TensorFlow o el modelo, usamos predicción simulada
+    # Si no tenemos TensorFlow o el modelo, avisamos claramente y NO devolvemos una
+    # predicción simulada (evita confundir a usuarios remotos).
+    prediction_override = None
     if model is None or image is None or np is None:
-        # Predicción simulada (útil para probar la UI sin TensorFlow)
-        result = 'plastic'
-        confidence = 75.0
+        # No devolvemos una etiqueta ficticia; mostramos mensaje claro en la UI
+        prediction_override = ('Modelo no cargado en este proceso. Inicia sesión como admin y pulsa "Recargar modelo" o reinicia la aplicación.')
         # Avisar al usuario/admin para recargar modelo (si no está cargado en este proceso)
-        flash('Modelo no cargado en el servidor; usando predicción simulada. Inicia sesión como admin y pulsa "Recargar modelo" o reinicia la aplicación.', 'error')
-        logging.warning('Se usó predicción simulada para %s (PID=%d)', filepath, os.getpid())
+        flash('Modelo no cargado en el servidor; por favor recarga o reinicia la app (admin).', 'error')
+        logging.warning('Modelo no cargado (predicción no disponible) para %s (PID=%d)', filepath, os.getpid())
     else:
         try:
             # Preprocesar imagen
@@ -217,11 +219,17 @@ def upload():
             result = 'error'
             confidence = 0.0
 
-    info = INFO_RESIDUOS.get(result, None)
+    info = INFO_RESIDUOS.get(result, None) if (model is not None and result is not None) else None
+
+    # Si definimos un override de mensaje (ej. modelo no cargado), usarlo para la UI
+    if prediction_override is not None:
+        prediction_text = prediction_override
+    else:
+        prediction_text = f"Predicción: {result} ({confidence:.2f}% confianza)"
 
     return render_template(
         'index.html',
-        prediction=f"Predicción: {result} ({confidence:.2f}% confianza)",
+        prediction=prediction_text,
         img_path=filepath,
         info=info
     )
@@ -450,6 +458,22 @@ def public_model_status():
     })
 
 
+@app.route('/whoami', methods=['GET'])
+def whoami():
+    """Endpoint de diagnóstico: devuelve el PID del proceso y si el modelo está cargado.
+    Útil para depurar qué proceso atendió la petición desde clientes remotos.
+    """
+    try:
+        pid = os.getpid()
+    except Exception:
+        pid = None
+    return jsonify({
+        'pid': pid,
+        'model_loaded': model is not None,
+        'model_path': MODEL_PATH if model is not None else None
+    })
+
+
 # Ruta para recolectar ejemplos etiquetados y guardarlos en dataset/<clase>
 @app.route('/collect', methods=['GET', 'POST'])
 @admin_required
@@ -536,4 +560,10 @@ else:
         print(f"[WARN] {msg} (no cargado en proceso - fallback inmediato)")
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # Allow configuring host/port via environment variables so you can bind 0.0.0.0
+    # when you want to share the app on the LAN. Example (PowerShell):
+    #   $env:FLASK_HOST='0.0.0.0'; py .\app.py
+    host = os.environ.get('FLASK_HOST', '127.0.0.1')
+    port = int(os.environ.get('FLASK_PORT', '5000'))
+    debug = os.environ.get('FLASK_DEBUG', 'True').lower() in ('1','true','yes')
+    app.run(debug=debug, host=host, port=port)
