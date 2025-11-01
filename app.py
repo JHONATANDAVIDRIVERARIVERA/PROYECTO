@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from functools import wraps
 import os
+import logging
 import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
 from pathlib import Path
@@ -26,10 +27,13 @@ try:
     try:
         model = load_model('garbage_model.h5')
         print("[INFO] Modelo cargado correctamente")
+        logging.info('Modelo cargado correctamente en import inicial')
     except Exception as e:
         print("[WARN] No se pudo cargar el modelo:", e)
+        logging.warning('No se pudo cargar el modelo en import inicial: %s', e)
 except ImportError as e:
     print("[INFO] TensorFlow/NumPy no disponible, funcionando en modo simulación:", e)
+    logging.warning('TensorFlow/NumPy no disponible en import inicial: %s', e)
 
 # =========================
 # CONFIGURACIÓN FLASK
@@ -37,6 +41,12 @@ except ImportError as e:
 app = Flask(__name__)
 UPLOAD_FOLDER = 'static/uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+# Logging básico a archivo para diagnóstico
+logging.basicConfig(
+    filename=os.path.join(os.path.dirname(__file__), 'app.log'),
+    level=logging.INFO,
+    format='%(asctime)s [PID:%(process)d] %(levelname)s: %(message)s'
+)
 # Secret key para sesiones (en producción usa una variable de entorno segura)
 app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'dev-secret-key')
 # Hacer que las sesiones sean permanentes por defecto y duren 30 días
@@ -186,6 +196,7 @@ def upload():
         confidence = 75.0
         # Avisar al usuario/admin para recargar modelo (si no está cargado en este proceso)
         flash('Modelo no cargado en el servidor; usando predicción simulada. Inicia sesión como admin y pulsa "Recargar modelo" o reinicia la aplicación.', 'error')
+        logging.warning('Se usó predicción simulada para %s (PID=%d)', filepath, os.getpid())
     else:
         try:
             # Preprocesar imagen
@@ -199,8 +210,10 @@ def upload():
             class_index = np.argmax(predictions)
             result = CLASS_NAMES[class_index]
             confidence = predictions[0][class_index] * 100
+            logging.info('Predicción real para %s -> %s (%.2f%%) [PID=%d]', filepath, result, confidence, os.getpid())
         except Exception as e:
             print("[ERROR] Error al procesar imagen:", e)
+            logging.error('Error procesando imagen %s: %s', filepath, e)
             result = 'error'
             confidence = 0.0
 
@@ -393,13 +406,16 @@ def reload_model_from_disk():
             load_model = _tf_load_model
             image = _tf_image
         except Exception as e:
+            logging.error('Error importando TensorFlow/NumPy en reload_model_from_disk: %s', e)
             return False, f'TensorFlow/NumPy no disponible o error al importarlos: {e}'
 
     try:
         new_model = load_model(MODEL_PATH)
         model = new_model
+        logging.info('Modelo recargado desde %s', MODEL_PATH)
         return True, f'Modelo recargado desde {MODEL_PATH}'
     except Exception as e:
+        logging.error('Error recargando el modelo desde %s: %s', MODEL_PATH, e)
         return False, f'Error recargando el modelo: {e}'
 
 
