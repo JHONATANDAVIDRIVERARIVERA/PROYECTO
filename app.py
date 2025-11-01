@@ -483,5 +483,32 @@ def pagina3():
 # =========================
 # EJECUTAR SERVIDOR
 # =========================
+# Registrar handler para cargar el modelo cuando el proceso empiece a servir peticiones.
+# Usamos before_serving si está disponible (Flask >=2.0/2.3), si no, intentamos
+# before_first_request; como último recurso intentamos recargar inmediatamente.
+if hasattr(app, 'before_serving'):
+    @app.before_serving
+    def load_model_on_start():
+        ok, msg = reload_model_from_disk()
+        if ok:
+            print(f"[INFO] {msg} (cargado en proceso)")
+        else:
+            print(f"[WARN] {msg} (no cargado en proceso)")
+elif hasattr(app, 'before_first_request'):
+    @app.before_first_request
+    def load_model_on_first_request():
+        ok, msg = reload_model_from_disk()
+        if ok:
+            print(f"[INFO] {msg} (cargado en proceso)")
+        else:
+            print(f"[WARN] {msg} (no cargado en proceso)")
+else:
+    # Fallback: intentar cargar ahora (puede bloquear el arranque)
+    ok, msg = reload_model_from_disk()
+    if ok:
+        print(f"[INFO] {msg} (cargado en proceso - fallback inmediato)")
+    else:
+        print(f"[WARN] {msg} (no cargado en proceso - fallback inmediato)")
+
 if __name__ == '__main__':
     app.run(debug=True)
