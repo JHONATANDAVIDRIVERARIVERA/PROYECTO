@@ -2,6 +2,7 @@ Flask>=2.0
 numpy>=1.24
 Pillow>=9.0
 werkzeug>=2.0
-# On Windows prefer the CPU package unless you need GPU support
+# On Windows and many PaaS prefer the CPU package unless you need GPU support
+tensorflow-cpu==2.20.0
 tensorflow
 gunicorn
