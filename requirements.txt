@@ -4,4 +4,5 @@ Pillow>=9.0
 werkzeug>=2.0
 # On Windows and many PaaS prefer the CPU package unless you need GPU support
 tensorflow-cpu==2.20.0
+tensorflow
 gunicorn
