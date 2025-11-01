@@ -6,6 +6,7 @@ import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
 from pathlib import Path
 from datetime import timedelta
+import threading
 
 # Variables globales para TensorFlow/modelo
 load_model = None
@@ -560,10 +561,24 @@ else:
         print(f"[WARN] {msg} (no cargado en proceso - fallback inmediato)")
 
 if __name__ == '__main__':
-    # Allow configuring host/port via environment variables so you can bind 0.0.0.0
-    # when you want to share the app on the LAN. Example (PowerShell):
-    #   $env:FLASK_HOST='0.0.0.0'; py .\app.py
+    # Allow configuring host/port via environment variables. Many PaaS
+    # (Render/Heroku) set $PORT — prefer that if present.
     host = os.environ.get('FLASK_HOST', '127.0.0.1')
-    port = int(os.environ.get('FLASK_PORT', '5000'))
+    # Prefer the standard PORT env var used by many hosts (Render, Heroku)
+    port = int(os.environ.get('PORT', os.environ.get('FLASK_PORT', '5000')))
     debug = os.environ.get('FLASK_DEBUG', 'True').lower() in ('1','true','yes')
+
+    # Start model loading in background so startup isn't blocked by TensorFlow
+    # initialization (helps prevent platform timeouts / 502 on first deploy).
+    def _bg_load():
+        logging.info('Background model loader thread started (PID=%s)', os.getpid())
+        ok, msg = reload_model_from_disk()
+        if ok:
+            logging.info('Background loader: %s', msg)
+        else:
+            logging.warning('Background loader failed: %s', msg)
+
+    t = threading.Thread(target=_bg_load, daemon=True)
+    t.start()
+
     app.run(debug=debug, host=host, port=port)
