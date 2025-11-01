@@ -4,4 +4,4 @@ Pillow>=9.0
 werkzeug>=2.0
 # On Windows prefer the CPU package unless you need GPU support
 tensorflow-cpu==2.20.0
-gunicorn app:app --bind 0.0.0.0:$PORT --workers 1 --threads 4 --preload
+gunicorn
