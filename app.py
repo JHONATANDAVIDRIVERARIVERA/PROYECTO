@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from functools import wraps
 import os
 import sqlite3
@@ -184,6 +184,8 @@ def upload():
         # Predicción simulada (útil para probar la UI sin TensorFlow)
         result = 'plastic'
         confidence = 75.0
+        # Avisar al usuario/admin para recargar modelo (si no está cargado en este proceso)
+        flash('Modelo no cargado en el servidor; usando predicción simulada. Inicia sesión como admin y pulsa "Recargar modelo" o reinicia la aplicación.', 'error')
     else:
         try:
             # Preprocesar imagen
@@ -410,6 +412,17 @@ def reload_model():
     else:
         flash(msg, 'error')
     return redirect(url_for('index'))
+
+
+@app.route('/model_status', methods=['GET'])
+@admin_required
+def model_status():
+    """Devuelve el estado del modelo cargado (solo admin)."""
+    return jsonify({
+        'loaded': model is not None,
+        'model_path': MODEL_PATH,
+        'class_names': CLASS_NAMES
+    })
 
 
 # Ruta para recolectar ejemplos etiquetados y guardarlos en dataset/<clase>
