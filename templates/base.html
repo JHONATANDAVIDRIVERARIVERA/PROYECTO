@@ -136,6 +136,9 @@
         </div>
 
         <div class="nav-right">
+            <div class="nav-item" id="model-status-badge" style="margin-right:12px; color: #fff; font-weight:600;">
+                Modelo: comprobando...
+            </div>
             {% if session.get('user') %}
                 <div class="nav-item">Bienvenido, <strong>{{ session.get('user') }}</strong></div>
                 <div class="nav-item dropdown">
@@ -164,5 +167,29 @@
     <div class="container">
         {% block content %}{% endblock %}
     </div>
+    <script>
+        // Consultar el estado del modelo y actualizar el badge en la navbar
+        async function updateModelBadge(){
+            try{
+                const r = await fetch('/public_model_status');
+                if(!r.ok) throw new Error('status '+r.status);
+                const j = await r.json();
+                const el = document.getElementById('model-status-badge');
+                if(!el) return;
+                if(j.loaded){
+                    el.textContent = 'Modelo: cargado';
+                    el.style.color = '#b7f0c4';
+                } else {
+                    el.textContent = 'Modelo: no disponible';
+                    el.style.color = '#ffd1c1';
+                }
+            }catch(err){
+                const el = document.getElementById('model-status-badge');
+                if(el) { el.textContent = 'Modelo: error'; el.style.color = '#ffd1c1'; }
+            }
+        }
+        // Ejecutar al cargar y cada 20s
+        document.addEventListener('DOMContentLoaded', ()=>{ updateModelBadge(); setInterval(updateModelBadge, 20000); });
+    </script>
 </body>
 </html>

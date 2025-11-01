@@ -425,6 +425,15 @@ def model_status():
     })
 
 
+@app.route('/public_model_status', methods=['GET'])
+def public_model_status():
+    """Estado público del modelo (para la UI)."""
+    return jsonify({
+        'loaded': model is not None,
+        'model_path': MODEL_PATH if model is not None else None
+    })
+
+
 # Ruta para recolectar ejemplos etiquetados y guardarlos en dataset/<clase>
 @app.route('/collect', methods=['GET', 'POST'])
 @admin_required
