@@ -182,14 +182,12 @@ def upload():
     filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
     file.save(filepath)
 
-    # Intentar cargar el modelo en tiempo de ejecución si aún no está cargado
+    # No intentar recargar el modelo sin autorización (evita bloquear la petición).
+    # El modelo se carga en background al arrancar y existe la ruta /reload_model
+    # para administradores. Si no está cargado, devolvemos un mensaje claro.
     global model
     if model is None or load_model is None or image is None or np is None:
-        ok, msg = reload_model_from_disk()
-        if ok:
-            print(f"[INFO] {msg}")
-        else:
-            print(f"[WARN] {msg}")
+        logging.info('Predict requested but model not loaded in this process (PID=%d)', os.getpid())
 
     # Si no tenemos TensorFlow o el modelo, avisamos claramente y NO devolvemos una
     # predicción simulada (evita confundir a usuarios remotos).
