@@ -2,6 +2,6 @@ Flask
 numpy
 Pillow
 werkzeug
-# On Windows and many PaaS prefer the CPU package unless you need GPU support
+# On Windows and many PaaS prefer the CPU package unless you need GPU supportGet-Content .\app.log -Tail 200
 tensorflow-cpu==2.20.0
 gunicorn

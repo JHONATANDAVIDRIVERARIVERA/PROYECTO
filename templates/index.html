@@ -273,6 +273,17 @@ img {
         {% if prediction %}
         <h2>{{ prediction }}</h2>
 
+        {# Mostrar badge indicando la fuente de la predicción (modelo real o fallback) #}
+        {% if source %}
+        <div style="margin-top:8px; display:inline-block; padding:6px 10px; border-radius:12px; font-weight:600; font-size:13px;">
+            {% if source == 'model' %}
+                <span style="background:#d1e7dd; color:#0f5132;">Fuente: modelo</span>
+            {% else %}
+                <span style="background:#fff4cc; color:#665200;">Fuente: aproximada (fallback)</span>
+            {% endif %}
+        </div>
+        {% endif %}
+
         {% if info %}
         <div style="margin-top:25px; background:#f8f9fa; border-radius:12px; padding:15px; box-shadow:0 3px 8px rgba(0,0,0,0.1);">
             <h3>🧾 Información sobre {{ info.nombre }}</h3>

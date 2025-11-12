@@ -285,6 +285,9 @@ def upload():
 
     info = INFO_RESIDUOS.get(result, None) if (model is not None and result is not None) else None
 
+    # Source: whether this came from the real model or from the fallback heuristic
+    source = 'model' if (model is not None and image is not None and np is not None) else 'fallback'
+
     # Si definimos un override de mensaje (ej. modelo no cargado), usarlo para la UI
     if prediction_override is not None:
         prediction_text = prediction_override
@@ -295,7 +298,8 @@ def upload():
         'index.html',
         prediction=prediction_text,
         img_path=filepath,
-        info=info
+        info=info,
+        source=source
     )
 
 
@@ -536,6 +540,70 @@ def whoami():
         'model_loaded': model is not None,
         'model_path': MODEL_PATH if model is not None else None
     })
+
+
+@app.route('/predict.json', methods=['POST'])
+def predict_json():
+    """API JSON para subir una imagen y recibir la predicción en JSON.
+    Devuelve: { source: 'model'|'fallback', label: str, confidence: float, info?: {...} }
+    """
+    file = request.files.get('file')
+    if not file:
+        return jsonify({'error': 'No file uploaded.'}), 400
+
+    filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+    file.save(filepath)
+
+    # Si el modelo está disponible, usarlo; si no, devolver fallback heurístico rápido
+    if model is None or image is None or np is None:
+        # Heurística rápida (misma que la usada en la UI fallback)
+        try:
+            from PIL import Image as PILImage
+            import colorsys
+            im = PILImage.open(filepath).convert('RGB')
+            im = im.resize((64,64))
+            pixels = list(im.getdata())
+            r_mean = sum([p[0] for p in pixels]) / len(pixels)
+            g_mean = sum([p[1] for p in pixels]) / len(pixels)
+            b_mean = sum([p[2] for p in pixels]) / len(pixels)
+            rn, gn, bn = r_mean/255.0, g_mean/255.0, b_mean/255.0
+            h, s, v = colorsys.rgb_to_hsv(rn, gn, bn)
+
+            if (0.2126 * r_mean + 0.7152 * g_mean + 0.0722 * b_mean) < 60:
+                label = 'trash'; conf = 45.0
+            elif s < 0.15 and (r_mean+g_mean+b_mean)/3 > 200:
+                label = 'paper'; conf = 65.0
+            elif g_mean >= r_mean and g_mean >= b_mean and g_mean > 110:
+                label = 'glass'; conf = 60.0
+            elif r_mean > g_mean and r_mean > b_mean and r_mean > 130:
+                label = 'metal'; conf = 55.0
+            elif (0.2126 * r_mean + 0.7152 * g_mean + 0.0722 * b_mean) > 120 and s > 0.25:
+                label = 'plastic'; conf = 58.0
+            else:
+                label = 'cardboard'; conf = 50.0
+
+            logging.info('Predict.json fallback for %s -> %s (%.2f%%) [PID=%d]', filepath, label, conf, os.getpid())
+            info = INFO_RESIDUOS.get(label, None)
+            return jsonify({'source': 'fallback', 'label': label, 'confidence': conf, 'info': info})
+        except Exception as e:
+            logging.error('Error in predict.json fallback for %s: %s', filepath, e)
+            return jsonify({'error': 'Fallback prediction failed.'}), 500
+
+    # Modelo disponible: hacer la predicción real
+    try:
+        img = image.load_img(filepath, target_size=(128,128))
+        img_array = image.img_to_array(img)
+        img_array = np.expand_dims(img_array, axis=0)/255.0
+        predictions = model.predict(img_array)
+        class_index = int(np.argmax(predictions))
+        label = CLASS_NAMES[class_index]
+        confidence = float(predictions[0][class_index]) * 100.0
+        logging.info('Predict.json real for %s -> %s (%.2f%%) [PID=%d]', filepath, label, confidence, os.getpid())
+        info = INFO_RESIDUOS.get(label, None)
+        return jsonify({'source': 'model', 'label': label, 'confidence': confidence, 'info': info})
+    except Exception as e:
+        logging.error('Error processing image in predict.json for %s: %s', filepath, e)
+        return jsonify({'error': 'Error processing image.'}), 500
 
 
 # Ruta para recolectar ejemplos etiquetados y guardarlos en dataset/<clase>
