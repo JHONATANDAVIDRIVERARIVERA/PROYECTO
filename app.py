@@ -7,6 +7,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from pathlib import Path
 from datetime import timedelta
 import threading
+import colorsys
+from PIL import Image as PILImage
 
 # Variables globales para TensorFlow/modelo
 load_model = None
@@ -199,6 +201,58 @@ def upload():
     global model
     if model is None or load_model is None or image is None or np is None:
         logging.info('Predict requested but model not loaded in this process (PID=%d)', os.getpid())
+        # Intentar una predicción heurística ligera y rápida (fallback)
+        try:
+            def heuristic_predict(img_path):
+                """Heurística rápida basada en brillo / color para fallback.
+                Devuelve (label, confidence).
+                """
+                try:
+                    im = PILImage.open(img_path).convert('RGB')
+                    # reducir tamaño para rapidez
+                    im = im.resize((64, 64))
+                    pixels = list(im.getdata())
+                    # medias
+                    r_mean = sum([p[0] for p in pixels]) / len(pixels)
+                    g_mean = sum([p[1] for p in pixels]) / len(pixels)
+                    b_mean = sum([p[2] for p in pixels]) / len(pixels)
+                    # brillo aproximado
+                    brightness = 0.2126 * r_mean + 0.7152 * g_mean + 0.0722 * b_mean
+                    # saturación aproximada usando HSV de promedio RGB
+                    rn, gn, bn = r_mean/255.0, g_mean/255.0, b_mean/255.0
+                    h, s, v = colorsys.rgb_to_hsv(rn, gn, bn)
+
+                    # reglas heurísticas (muy simples)
+                    if brightness < 60:
+                        return 'trash', 45.0
+                    if s < 0.15 and brightness > 200:
+                        return 'paper', 65.0
+                    # verde dominante -> vidrio
+                    if g_mean >= r_mean and g_mean >= b_mean and g_mean > 110:
+                        return 'glass', 60.0
+                    # rojo dominante -> metal (heurística)
+                    if r_mean > g_mean and r_mean > b_mean and r_mean > 130:
+                        return 'metal', 55.0
+                    # brillo medio y saturación alta -> plástico
+                    if brightness > 120 and s > 0.25:
+                        return 'plastic', 58.0
+                    # por defecto: cartón
+                    return 'cardboard', 50.0
+                except Exception as e:
+                    logging.warning('Heuristic predict failed for %s: %s', img_path, e)
+                    return 'trash', 40.0
+
+            fallback_label, fallback_conf = heuristic_predict(filepath)
+            result = fallback_label
+            confidence = fallback_conf
+            logging.info('Fallback heuristic prediction for %s -> %s (%.2f%%) [PID=%d]', filepath, result, confidence, os.getpid())
+            # marcar que es aproximada
+            result = f"{result} (aprox.)"
+            flash('Se devolvió una predicción aproximada (fallback) porque el modelo no está cargado en este proceso.', 'warning')
+        except Exception as e:
+            logging.error('Error generando fallback heurístico para %s: %s', filepath, e)
+            result = 'error'
+            confidence = 0.0
 
     # Si no tenemos TensorFlow o el modelo, avisamos claramente y NO devolvemos una
     # predicción simulada (evita confundir a usuarios remotos).
