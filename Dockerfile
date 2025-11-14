@@ -10,7 +10,8 @@ WORKDIR /app
 
 # Copiar requirements (sin tensorflow) e instalar dependencias Python
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Force reinstall/upgrade of Python packages to avoid conflicts with base image system packages
+RUN pip install --no-cache-dir --upgrade --upgrade-strategy eager --ignore-installed -r requirements.txt
 
 # Copiar el código de la aplicación
 COPY . .
