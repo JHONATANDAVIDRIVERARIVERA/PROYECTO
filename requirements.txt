@@ -3,5 +3,6 @@ Pillow==10.4.0
 werkzeug==3.0.3
 # Use CPU-only version to reduce memory footprint (200MB vs 400MB+)
 # TensorFlow will install compatible numpy automatically
-tensorflow-cpu==2.15.0
+# Using latest version compatible with Python 3.13
+tensorflow-cpu==2.20.0
 gunicorn==22.0.0
