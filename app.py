@@ -21,6 +21,10 @@ import os as _os
 _os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # Silenciar logs de TF
 _os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'  # Deshabilitar oneDNN
 _os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'false'  # No reservar toda la GPU
+_os.environ['CUDA_VISIBLE_DEVICES'] = '-1'  # Force CPU usage
+_os.environ['OMP_NUM_THREADS'] = '1'  # Limit OpenMP threads
+_os.environ['TF_NUM_INTEROP_THREADS'] = '1'
+_os.environ['TF_NUM_INTRAOP_THREADS'] = '1'
 
 # Intentar importar TensorFlow y NumPy (opcional)
 try:
