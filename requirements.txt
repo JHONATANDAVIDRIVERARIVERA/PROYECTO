@@ -3,4 +3,5 @@ numpy
 Pillow
 werkzeug
 # On Windows and many PaaS prefer the CPU package unless you need GPU support
+tensorflow-cpu==2.20.0
 gunicorn
