@@ -210,10 +210,21 @@ def upload():
     filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
     file.save(filepath)
 
-    # No intentar recargar el modelo sin autorización (evita bloquear la petición).
-    # El modelo se carga en background al arrancar y existe la ruta /reload_model
-    # para administradores. Si no está cargado, devolvemos un mensaje claro.
+    # Lazy loading: Si el modelo no está cargado, intentar cargarlo ahora
     global model
+    if model is None and load_model is not None and image is not None and np is not None:
+        logging.info('Lazy loading model on first prediction (PID=%d)', os.getpid())
+        try:
+            ok, msg = reload_model_from_disk()
+            if ok:
+                logging.info('Lazy load successful: %s', msg)
+                flash('Modelo cargado automáticamente (primera predicción).', 'info')
+            else:
+                logging.warning('Lazy load failed: %s', msg)
+        except Exception as e:
+            logging.error('Error during lazy load: %s', e)
+    
+    # Si después del lazy loading el modelo aún no está disponible, usar fallback
     if model is None or load_model is None or image is None or np is None:
         logging.info('Predict requested but model not loaded in this process (PID=%d)', os.getpid())
         # Intentar una predicción heurística ligera y rápida (fallback)
@@ -679,32 +690,11 @@ def pagina3():
 # =========================
 # EJECUTAR SERVIDOR
 # =========================
-# Registrar handler para cargar el modelo cuando el proceso empiece a servir peticiones.
-# Usamos before_serving si está disponible (Flask >=2.0/2.3), si no, intentamos
-# before_first_request; como último recurso intentamos recargar inmediatamente.
-if hasattr(app, 'before_serving'):
-    @app.before_serving
-    def load_model_on_start():
-        ok, msg = reload_model_from_disk()
-        if ok:
-            print(f"[INFO] {msg} (cargado en proceso)")
-        else:
-            print(f"[WARN] {msg} (no cargado en proceso)")
-elif hasattr(app, 'before_first_request'):
-    @app.before_first_request
-    def load_model_on_first_request():
-        ok, msg = reload_model_from_disk()
-        if ok:
-            print(f"[INFO] {msg} (cargado en proceso)")
-        else:
-            print(f"[WARN] {msg} (no cargado en proceso)")
-else:
-    # Fallback: intentar cargar ahora (puede bloquear el arranque)
-    ok, msg = reload_model_from_disk()
-    if ok:
-        print(f"[INFO] {msg} (cargado en proceso - fallback inmediato)")
-    else:
-        print(f"[WARN] {msg} (no cargado en proceso - fallback inmediato)")
+# NO cargar el modelo automáticamente en startup para evitar worker timeout.
+# El modelo se cargará bajo demanda (lazy loading) en la primera predicción
+# o manualmente via /reload_model (admin only).
+print("[INFO] Modelo NO cargado al inicio (lazy loading habilitado)")
+logging.info("Modelo NO cargado al inicio - se cargará bajo demanda o via /reload_model")
 
 if __name__ == '__main__':
     # Allow configuring host/port via environment variables. Many PaaS
