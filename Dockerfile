@@ -1,4 +1,4 @@
-FROM tensorflow/tensorflow:2.20.0-cpu
+FROM tensorflow/tensorflow:2.20.0
 
 # Variables de entorno
 ENV PYTHONDONTWRITEBYTECODE=1 \
