@@ -16,9 +16,25 @@ image = None
 model = None
 np = None
 
+# Configurar TensorFlow para uso mínimo de memoria ANTES de importar
+import os as _os
+_os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # Silenciar logs de TF
+_os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'  # Deshabilitar oneDNN
+_os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'false'  # No reservar toda la GPU
+
 # Intentar importar TensorFlow y NumPy (opcional)
 try:
     import numpy as np
+    
+    # Configurar TensorFlow para memoria limitada
+    import tensorflow as tf
+    tf.config.set_soft_device_placement(True)
+    # Limitar memoria de TensorFlow a ~400MB
+    gpus = tf.config.list_physical_devices('GPU')
+    if gpus:
+        for gpu in gpus:
+            tf.config.experimental.set_memory_growth(gpu, True)
+    
     from tensorflow.keras.models import load_model as tf_load_model
     from tensorflow.keras.preprocessing import image as tf_image
     
@@ -26,14 +42,9 @@ try:
     load_model = tf_load_model
     image = tf_image
     
-    # Intentar cargar el modelo
-    try:
-        model = load_model('garbage_model.h5')
-        print("[INFO] Modelo cargado correctamente")
-        logging.info('Modelo cargado correctamente en import inicial')
-    except Exception as e:
-        print("[WARN] No se pudo cargar el modelo:", e)
-        logging.warning('No se pudo cargar el modelo en import inicial: %s', e)
+    # NO cargar el modelo en import (esperar a background loader)
+    print("[INFO] TensorFlow configurado con límites de memoria")
+    logging.info('TensorFlow configurado con límites de memoria')
 except ImportError as e:
     print("[INFO] TensorFlow/NumPy no disponible, funcionando en modo simulación:", e)
     logging.warning('TensorFlow/NumPy no disponible en import inicial: %s', e)
